@@ -30,7 +30,7 @@ The Relation Extraction library shares object models with the Entity Extraction 
 	relationExtractor.getGraph("computerworld", sentences);
 	
 ## Test
-1) Install the dependency as described [above](#dependency)
+1) Install the dependency as described [above](https://github.com/stucco/relation-extractor#dependency)
 
 2) Run the command:
 
