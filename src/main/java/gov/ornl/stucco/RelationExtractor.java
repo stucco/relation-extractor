@@ -25,7 +25,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 public class RelationExtractor {
 		
-	private static final String ONTOLOGY_PATH = "https://raw.githubusercontent.com/stucco/ontology/master/stucco_schema.json"; //"/Users/k5y/Documents/Projects/STUCCO/Workspace/ontology/stucco_schema.json";
+	private static final String ONTOLOGY_PATH = "https://raw.githubusercontent.com/stucco/ontology/master/stucco_schema.json";
 	private static final int RELATIONSHIP_SENTENCE_DISTANCE = 2;
 	private static ObjectMapper mapper = new ObjectMapper();
 	
