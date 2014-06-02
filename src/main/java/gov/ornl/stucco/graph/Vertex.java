@@ -12,11 +12,13 @@ public class Vertex {
 	private static final String _type = "vertex";
 			
 	private String _id;
+	private String name;
 	private String vertexType;
 	private Map<String, String> properties;
 	
 	public Vertex(String id, String type) {
 		this._id = id;
+		this.name = id;
 		this.vertexType = type;
 		this.properties = new HashMap<String, String>();
 	}
@@ -27,6 +29,14 @@ public class Vertex {
 
 	public void set_id(String _id) {
 		this._id = _id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getVertexType() {
@@ -54,6 +64,7 @@ public class Vertex {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((_id == null) ? 0 : _id.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result
 				+ ((properties == null) ? 0 : properties.hashCode());
 		result = prime * result
@@ -75,6 +86,16 @@ public class Vertex {
 				return false;
 		} else if (!_id.equals(other._id))
 			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (properties == null) {
+			if (other.properties != null)
+				return false;
+		} else if (!properties.equals(other.properties))
+			return false;
 		if (vertexType == null) {
 			if (other.vertexType != null)
 				return false;
@@ -85,8 +106,8 @@ public class Vertex {
 
 	@Override
 	public String toString() {
-		return "Vertex [_id=" + _id + ", vertexType=" + vertexType
-				+ ", properties=" + properties + "]";
+		return "Vertex [_id=" + _id + ", name=" + name + ", vertexType="
+				+ vertexType + ", properties=" + properties + "]";
 	}
 	
 	public String toGraphSON() {
@@ -96,6 +117,10 @@ public class Vertex {
 		
 		graph.append("\"_id\":\"");
 		graph.append(_id);
+		graph.append("\",");
+		
+		graph.append("\"name\":\"");
+		graph.append(name);
 		graph.append("\",");
 		
 		graph.append("\"_type\":\"");

@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>gov.ornl.stucco</groupId>
   <artifactId>relation-extractor</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>1.0.0</version>
   <dependencies>
   	<dependency>
   		<groupId>gov.ornl.stucco</groupId>

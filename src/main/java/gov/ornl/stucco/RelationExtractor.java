@@ -49,7 +49,7 @@ public class RelationExtractor {
 	/**
 	 * @param source name of the data source
 	 * @param labeledEntities annotated version of the unstructured text
-	 * @return
+	 * @return graph in GraphSON format
 	 */
 	public String getGraph(String source, Sentences labeledEntities) {
 		StringBuilder graphBuilder = new StringBuilder();
@@ -147,9 +147,10 @@ public class RelationExtractor {
 	 * @param source name of the data source
 	 * @param phrase property value to be added to the vertex
 	 * @param label property of the vertex
-	 * @return
+	 * @return new list of vertices the sentence
 	 */
 	private List<Vertex> updateVertexList(List<Vertex> vertices, int sentNum, String source, String phrase, String label) {
+        //TODO: Add timestamp & score to graph vertices
 		if (label.startsWith("sw.")) {
 			String vertexType = "software";
 			label = label.replace("sw.", "");
