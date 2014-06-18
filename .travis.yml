@@ -7,3 +7,7 @@ before_install:
   - cd entity-extractor
   - mvn clean install
   - cd ..
+after_success:
+  - wget https://raw.githubusercontent.com/stucco/test/master/rerun-test.sh
+  - chmod a+x ./rerun-test.sh
+  - ./rerun-test.sh
