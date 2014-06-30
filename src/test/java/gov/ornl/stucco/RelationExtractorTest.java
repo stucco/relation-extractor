@@ -7,10 +7,10 @@ import gov.ornl.stucco.entity.models.Word;
 import org.junit.Test;
 
 public class RelationExtractorTest {
-	private static String expectedGraph = "{ \"vertices\": [{\"_id\":\"software_0_0\",\"_type\":\"vertex\",\"vertexType\":\"software\",\"product\":\"Windows XP\",\"source\":\"nvd\",\"vendor\":\"Microsoft\",\"version\":\"before 2.8\"}," +
-			"{\"_id\":\"vulnerability_0_1\",\"_type\":\"vertex\",\"vertexType\":\"vulnerability\",\"source\":\"nvd\",\"description\":\"cross-site scripting vulnerability\"}," +
-			"{\"_id\":\"vulnerability_0_2\",\"_type\":\"vertex\",\"vertexType\":\"vulnerability\",\"source\":\"nvd\",\"description\":\"file.php\"}," +
-			"{\"_id\":\"CVE-2014-1234\",\"_type\":\"vertex\",\"vertexType\":\"vulnerability\",\"source\":\"nvd\"}],\n" +
+	private static String expectedGraph = "{ \"vertices\": [{\"_id\":\"software_0_0\",\"name\":\"software_0_0\",\"_type\":\"vertex\",\"vertexType\":\"software\",\"product\":\"Windows XP\",\"source\":\"nvd\",\"vendor\":\"Microsoft\",\"version\":\"before 2.8\"}," +
+			"{\"_id\":\"vulnerability_0_1\",\"name\":\"vulnerability_0_1\",\"_type\":\"vertex\",\"vertexType\":\"vulnerability\",\"source\":\"nvd\",\"description\":\"cross-site scripting vulnerability\"}," +
+			"{\"_id\":\"vulnerability_0_2\",\"name\":\"vulnerability_0_2\",\"_type\":\"vertex\",\"vertexType\":\"vulnerability\",\"source\":\"nvd\",\"description\":\"file.php\"}," +
+			"{\"_id\":\"CVE-2014-1234\",\"name\":\"CVE-2014-1234\",\"_type\":\"vertex\",\"vertexType\":\"vulnerability\",\"source\":\"nvd\"}],\n" +
 			"\"edges\": [{\"_id\":\"software_0_0__CVE-2014-1234\",\"_type\":\"edge\",\"_label\":\"hasVulnerability\",\"_inV\":\"CVE-2014-1234\",\"_outV\":\"software_0_0\",\"inVType\":\"vulnerability\",\"outVType\":\"software\",\"source\":\"nvd\"}," +
 			"{\"_id\":\"vulnerability_0_1__CVE-2014-1234\",\"_type\":\"edge\",\"_label\":\"sameAs\",\"_inV\":\"CVE-2014-1234\",\"_outV\":\"vulnerability_0_1\",\"inVType\":\"vulnerability\",\"outVType\":\"vulnerability\",\"source\":\"nvd\"}," +
 			"{\"_id\":\"vulnerability_0_2__CVE-2014-1234\",\"_type\":\"edge\",\"_label\":\"sameAs\",\"_inV\":\"CVE-2014-1234\",\"_outV\":\"vulnerability_0_2\",\"inVType\":\"vulnerability\",\"outVType\":\"vulnerability\",\"source\":\"nvd\"}," +

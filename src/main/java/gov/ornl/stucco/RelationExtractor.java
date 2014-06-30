@@ -226,7 +226,7 @@ public class RelationExtractor {
 			}
 		}
 		else {
-			System.err.println("Unknown label '" + label + "' for phrase '" + phrase + "' encountered.");
+//			System.err.println("Unknown label '" + label + "' for phrase '" + phrase + "' encountered.");
 		}
 		
 		return vertices;
@@ -245,8 +245,11 @@ public class RelationExtractor {
 			List<Vertex> sentVertices = new ArrayList<Vertex>();
 			
 			int lastSentNum = Math.min(vertexMap.size(), (sentNum.intValue() + RELATIONSHIP_SENTENCE_DISTANCE));
-			for (int n=sentNum.intValue(); n<lastSentNum; n++) {		
-				sentVertices.addAll(vertexMap.get(Integer.valueOf(n)));
+			for (int n=sentNum.intValue(); n<lastSentNum; n++) {
+				Integer sentKey = Integer.valueOf(n);
+				if (vertexMap.containsKey(sentKey)) {
+					sentVertices.addAll(vertexMap.get(sentKey));
+				}
 			}
 			
 			//add an edge between all vertices in the same sentence
