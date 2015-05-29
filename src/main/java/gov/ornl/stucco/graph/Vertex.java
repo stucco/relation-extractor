@@ -58,6 +58,14 @@ public class Vertex {
 	public void addProperty(String propertyName, String propertyValue) {
 		properties.put(propertyName, propertyValue);
 	}
+	
+	public String getProperty(String propertyName) {
+		String value = null;
+		if (properties.containsKey(propertyName)) {
+			value = (String) properties.get(propertyName);
+		}
+		return value;
+	}
 
 	@Override
 	public int hashCode() {

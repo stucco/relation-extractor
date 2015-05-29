@@ -9,32 +9,27 @@ The Relation Extraction library shares object models with the Entity Extraction 
 	mvn clean install
 
 ## Input
-* The ontology JSON file, ([stucco_schema.json](https://github.com/stucco/ontology/stucco_schema.json)), read in from the STUCCO repository.
-* Output from the [Entity-Extractor](https://github.com/stucco/entity-extractor) as a [Sentences object](https://github.com/stucco/entity-extractor/blob/master/src/main/java/gov/ornl/stucco/entity/models/Sentences.java), which represents the list of words from the unstructured text, along with each word's part of speech tag, IOB tag, and domain label.
+* Output from the [Entity-Extractor](https://github.com/stucco/entity-extractor/tree/corenlp) as an Annotation object, which represents the sentences, list of words from the text, along with each word's part of speech tag and cyber domain label.
 * The source of the unstructured text
 
 ## Current Process
 * For each word, or phrase, labeled with a domain label:
-	* Use the domain label to find the vertex type in the ontology
 	* Search this sentence's set of previously created vertices, starting with the most recent
 		* If a vertex is found with the same type and it does not have the property specified by the current domain label, then update this vertex's properties with the current word/phrase
 		* Otherwise, create a new vertex of the corresponding type and with the appropriate property, then add it to the end of the set of vertices created for this sentence
 	
-* For each pair of vertices created within 2 sentences of each other:
-	* Use the vertex types to search the ontology for an possible edge between them
-	* If such an edge is defined in the ontology, then create an edge instance between the pair of vertices in the subgraph
-
-See the [Relation Extraction Documentation](https://github.com/stucco/docs/wiki/relation-extraction) on the wiki for more details.
-
+* For each sentence:
+	* For every pair of vertices:
+		* If there is an edge defined for the two types of vertices, then create an edge between them in the subgraph
+	
 ## Output
 * The GraphSON formatted subgraph of the vertices and edges created
 
 ## Usage
-	EntityExtractor entityExtractor = new EntityExtractor();
-	Sentences sentences = entityExtractor.getAnnotatedText("The first Critical update, MS13-088, deals with 10 vulnerabilities in Microsoft’s Internet Explorer (IE).");
-			
-	RelationExtractor relationExtractor = new RelationExtractor();
-	relationExtractor.getGraph("computerworld", sentences);
+	EntityLabeler labeler = new EntityLabeler();
+	Annotation doc = labeler.getAnnotatedDoc("My Doc", exampleText);
+	RelationExtractor rx = new RelationExtractor();
+	String graph = rx.createSubgraph("My source", doc);
 	
 ## Test
 1) Install the dependency as described [above](https://github.com/stucco/relation-extractor#dependency)
