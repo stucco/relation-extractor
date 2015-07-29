@@ -1,0 +1,91 @@
+{
+    "Patterns": [
+        {
+            "patternSequence": [
+                {
+                    "class": "CyberEntity",
+                    "value": "sw.vendor"
+                },
+                {
+                    "class": "CyberEntity",
+                    "value": "sw.product"
+                },
+                {
+                    "class": "CyberEntity",
+                    "value": "sw.version"
+                }
+            ],
+            "patternType": "ExactPattern",
+            "vertexType": "software"
+        },
+        {
+            "patternSequence": [
+                {
+                    "class": "CyberEntity",
+                    "value": "sw.vendor",
+                    "vType": "outV"
+                },
+                {
+                    "class": "Token",
+                    "value": "Windows"
+                },
+                {
+                    "class": "POS",
+                    "value": "NN"
+                },
+                {
+                    "class": "CyberEntity",
+                    "value": "sw.vendor",
+                    "vType": "outV"
+                },
+                {
+                    "class": "CyberEntity",
+                    "value": "sw.product",
+                    "vType": "outV"
+                },
+                {
+                    "class": "CyberEntity",
+                    "value": "sw.version",
+                    "vType": "outV"
+                },
+				{
+					"class": "CyberEntity",
+					"value": "vuln.relevant_term",
+					"vType": "inV"
+				}
+            ],
+            "patternType": "ExactPattern",
+            "edgeType": "hasVulnerability"
+        },
+        {
+            "patternSequence": [
+                {
+                    "class": "CyberEntity",
+                    "value": "sw.product"
+                },
+                {
+                    "class": "CyberEntity",
+                    "value": "sw.version"
+                },
+                {
+                    "class": "Token",
+                    "value": "update"
+                },
+                {
+                    "class": "Token",
+                    "value": "7.0.1"
+                },
+                {
+                    "class": "Token",
+                    "value": "."
+                },
+                {
+                    "class": "Token",
+                    "value": "The"
+                }
+            ],
+            "patternType": "ExactPattern",
+            "vertexType": "software"
+        }
+    ]
+}

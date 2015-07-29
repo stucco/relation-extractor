@@ -64,5 +64,14 @@
             </executions>
 		</plugin>
      </plugins>
+    <resources>
+        <resource>
+            <directory>src/main/resources</directory>
+            <includes>
+                <include>patterns_relations.json</include>
+                <include>patterns_relations_abbrev.json</include>
+            </includes>
+        </resource>
+    </resources>
    </build>
 </project>

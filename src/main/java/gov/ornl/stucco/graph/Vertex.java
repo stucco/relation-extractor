@@ -8,6 +8,7 @@ import java.util.Map;
  *
  */
 public class Vertex {
+	private static long uid = 1234;
 	
 	private static final String _type = "vertex";
 			
@@ -21,6 +22,10 @@ public class Vertex {
 		this.name = id;
 		this.vertexType = type;
 		this.properties = new HashMap<String, String>();
+	}
+	
+	public Vertex(String type) {
+		this(String.valueOf(getNextUID()), type);
 	}
 
 	public String get_id() {
@@ -44,7 +49,15 @@ public class Vertex {
 	}
 
 	public void setVertexType(String vertexType) {
-		this.vertexType = vertexType;
+//		if (vertexType.equalsIgnoreCase("sw")) {
+//			this.vertexType = "software";
+//		}
+//		else if (vertexType.equalsIgnoreCase("vuln")) {
+//			this.vertexType = "vulnerability";
+//		}
+//		else {
+			this.vertexType = vertexType;
+//		}
 	}
 
 	public Map<String, String> getProperties() {
@@ -136,7 +149,15 @@ public class Vertex {
 		graph.append("\",");
 		
 		graph.append("\"vertexType\":\"");
-		graph.append(vertexType);
+		if (vertexType.equalsIgnoreCase("sw")) {
+			graph.append("software");
+		}
+		else if (vertexType.equalsIgnoreCase("vuln")) {
+			graph.append("vulnerability");
+		}
+		else {
+			graph.append(vertexType);
+		}
 		graph.append("\",");
 		
 		for(String prop : properties.keySet()) {
@@ -151,5 +172,10 @@ public class Vertex {
 		graph.append("}");
 		
 		return graph.toString();
+	}
+	
+	private static long getNextUID() {
+		uid = uid + 1;
+		return uid;
 	}
 }
