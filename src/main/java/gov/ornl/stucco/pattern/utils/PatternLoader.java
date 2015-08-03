@@ -26,7 +26,7 @@ public class PatternLoader {
 	}
 
 	public static void main(String[] args) {
-		Patterns patterns = PatternLoader.loadPatterns("src/main/resources/examplePattern.json");
+		Patterns patterns = PatternLoader.loadPatterns("patterns_relations.json");
 		System.out.println(patterns.toString());
 	}
 

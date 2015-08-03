@@ -3,6 +3,10 @@
   <groupId>gov.ornl.stucco</groupId>
   <artifactId>relation-extractor</artifactId>
   <version>1.0.0</version>
+  <properties>
+      <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+      <maven.test.skip>true</maven.test.skip>
+  </properties>
   <dependencies>
   	<dependency>
   		<groupId>gov.ornl.stucco</groupId>
@@ -69,7 +73,6 @@
             <directory>src/main/resources</directory>
             <includes>
                 <include>patterns_relations.json</include>
-                <include>patterns_relations_abbrev.json</include>
             </includes>
         </resource>
     </resources>

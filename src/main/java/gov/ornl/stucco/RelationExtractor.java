@@ -35,7 +35,7 @@ import gov.ornl.stucco.pattern.utils.PatternLoader;
 public class RelationExtractor {
 		
 	public static final String SOURCE_PROPERTY = "source";
-	private static final String DEFAULT_PATTERNS = "src/main/resources/patterns_relations.json";
+	private static final String DEFAULT_PATTERNS = "patterns_relations.json";
 	
 	private Patterns patterns;
 	private List<CyberRelation> relationships;
