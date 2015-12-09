@@ -1,6 +1,5 @@
 package gov.ornl.stucco.pattern;
 
-import gov.ornl.stucco.model.CyberRelation;
 import gov.ornl.stucco.pattern.elements.PatternElement;
 
 import java.io.Serializable;

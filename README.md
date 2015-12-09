@@ -11,7 +11,7 @@ The Relation Extraction library shares object models with the Entity Extraction 
 ## Relationship Patterns
 These patterns are defined in a JSON-formatted file. There are three types of patterns we will need to find:
 
-* The exact-match pattern consists of two cyber-entity labels, and words or part-of-speech (pos) tags.  The annotated document must match the pattern exactly with no extra words. 
+* The exact-match pattern consists of at least two cyber-entity labels, and words or part-of-speech (pos) tags.  The annotated document must match the pattern exactly with no extra words. 
 	
 		Example Text: “Tomcat from Apache”
 		Pattern: SW.PRODUCT, "from", SW.VENDOR
@@ -29,7 +29,7 @@ These patterns are defined in a JSON-formatted file. There are three types of pa
 The majority of the knowledge graph's ontology is defined within this file, so the file can be modified while the extractor's mechanics remain the same. The file format is as follows:
 
 	{"Patterns": [
-	{"edgeType": "hasVulnerability", "patternType": "ExactPattern", "patternSequence": [{"class": "CyberEntity", "value": "sw.product", "vType": "outV", "vType": "outV"}, {"class": "Token", "value": "update"}, {"class": "Token", "value": "-LRB-"}, {"class": "CyberEntity", "value": "vuln.name", "vType": "inV"}]},
+	{"edgeType": "hasVulnerability", "patternType": "ExactPattern", "patternSequence": [{"class": "CyberEntity", "value": "sw.product", "vType": "outV"}, {"class": "Token", "value": "update"}, {"class": "Token", "value": "-LRB-"}, {"class": "CyberEntity", "value": "vuln.name", "vType": "inV"}]},
 	{"vertexType": "software", "patternType": "ExactPattern", "patternSequence": [{"class": "Token", "value": "versions"}, {"class": "Token", "value": "of"}, {"class": "CyberEntity", "value": "sw.product"}, {"class": "Token", "value": "are"}, {"class": "CyberEntity", "value": "sw.version"}, {"class": "POS", "value": "IN"}, {"class": "CyberEntity", "value": "sw.version"}]},
 	{"vertexType": "software", "patternType": "ParseTreePattern", "patternSequence": [{"class": "CyberEntity", "value": "sw.product"}, {"class": "TreeElement", "value": "NNP"}, ...]},
 	...

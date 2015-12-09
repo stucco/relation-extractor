@@ -62,6 +62,14 @@ public class CyberRelation {
 		this.isEdge = isEdge;
 	}
 	
+	public void addInVType(String inVType) {
+		this.inVTypes.add(inVType);
+	}
+	
+	public void addOutVType(String outVType) {
+		this.outVTypes.add(outVType);
+	}
+	
 	public List<Vertex> getVertexList(String source) {
 		List<Vertex> vertices = new ArrayList<Vertex>();
 		if (this.isEdge) {

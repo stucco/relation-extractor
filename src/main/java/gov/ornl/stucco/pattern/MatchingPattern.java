@@ -1,9 +1,9 @@
 package gov.ornl.stucco.pattern;
 
-import java.util.List;
-
 import edu.stanford.nlp.pipeline.Annotation;
 import gov.ornl.stucco.model.CyberRelation;
+
+import java.util.List;
 
 public interface MatchingPattern {
 
