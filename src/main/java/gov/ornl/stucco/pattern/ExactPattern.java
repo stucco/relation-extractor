@@ -22,43 +22,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class ExactPattern implements MatchingPattern {
-
-	private List<PatternElement> sequence;
-	private String edgeType;
-	private String vertexType;
+public class ExactPattern extends MatchingPattern {
 
 	public ExactPattern(List<PatternElement> seq, String edgeType, String vertexType) {
-		this.sequence = seq;
-		this.edgeType = edgeType;
-		this.vertexType = vertexType;
+		super(seq, edgeType, vertexType);
 	}
 
-	public List<PatternElement> getSequence() {
-		return sequence;
-	}
-
-	public void setSequence(List<PatternElement> sequence) {
-		this.sequence = sequence;
-	}
-
-	public String getEdgeType() {
-		return edgeType;
-	}
-
-	public void setEdgeType(String edgeType) {
-		this.edgeType = edgeType;
-	}
-
-	public String getVertexType() {
-		return vertexType;
-	}
-
-	public void setVertexType(String vertexType) {
-		this.vertexType = vertexType;
-	}
-
-	@Override
 	public List<CyberRelation> findPattern(Annotation doc) {
 		List<CyberRelation> relationships = new ArrayList<CyberRelation>();
 		System.err.println(">>> Finding exact pattern matches ...");
@@ -137,8 +106,8 @@ public class ExactPattern implements MatchingPattern {
 		List<CyberEntityMention> relationEntities = new ArrayList<CyberEntityMention>();
 		
 		//gather the vertex type names that are the inVertex types and those that are the outVertex types
-		Set<String> inVTypes = new HashSet<String>();
-		Set<String> outVTypes = new HashSet<String>();
+//		Set<String> inVTypes = new HashSet<String>();
+//		Set<String> outVTypes = new HashSet<String>();
 		
 		CoreMap testSentence = mention1.getSentence();
 		int docIndex = mention1.getHeadTokenStart() - patternIndex;
@@ -164,17 +133,17 @@ public class ExactPattern implements MatchingPattern {
 					candidateToken = tokens.get(mention1.getHeadTokenEnd());
 				}
 				relationEntities.add(mention1);
-				if (this.edgeType != null) {
-					if (patternElement.getvType() == PatternElement.edgeVType.inV) {
-						inVTypes.add(mention1.getType());
-					}
-					else if (patternElement.getvType() == PatternElement.edgeVType.outV) {
-						outVTypes.add(mention1.getType());
-					}
-					else {
-						System.err.println("Warning: The ExactPattern with '" + this.sequence + "' has an invalid vType definition.");
-					}
-				}
+//				if (this.edgeType != null) {
+//					if (patternElement.getvType() == PatternElement.edgeVType.inV) {
+//						inVTypes.add(mention1.getType());
+//					}
+//					else if (patternElement.getvType() == PatternElement.edgeVType.outV) {
+//						outVTypes.add(mention1.getType());
+//					}
+//					else {
+//						System.err.println("Warning: The ExactPattern with '" + this.sequence + "' has an invalid vType definition.");
+//					}
+//				}
 			}
 			else if (patternElement instanceof CyberEntity) {
 				if ((mention2.getType().equalsIgnoreCase(((CyberEntity) patternElement).getType())) && (mention2.getSubType().equalsIgnoreCase(((CyberEntity) patternElement).getSubType()))) {
@@ -187,17 +156,17 @@ public class ExactPattern implements MatchingPattern {
 						candidateToken = tokens.get(mention2.getHeadTokenEnd());
 					}
 					relationEntities.add(mention2);
-					if (this.edgeType != null) {
-						if (patternElement.getvType() == PatternElement.edgeVType.inV) {
-							inVTypes.add(mention2.getType());
-						}
-						else if (patternElement.getvType() == PatternElement.edgeVType.outV) {
-							outVTypes.add(mention2.getType());
-						}
-						else {
-							System.err.println("Warning: The ExactPattern with '" + this.sequence + "' has an invalid vType definition.");
-						}
-					}
+//					if (this.edgeType != null) {
+//						if (patternElement.getvType() == PatternElement.edgeVType.inV) {
+//							inVTypes.add(mention2.getType());
+//						}
+//						else if (patternElement.getvType() == PatternElement.edgeVType.outV) {
+//							outVTypes.add(mention2.getType());
+//						}
+//						else {
+//							System.err.println("Warning: The ExactPattern with '" + this.sequence + "' has an invalid vType definition.");
+//						}
+//					}
 				}
 				else if (!candidateToken.get(CyberAnnotation.class).equalsIgnoreCase(patternElement.getValue())) {
 					return null;
@@ -216,17 +185,17 @@ public class ExactPattern implements MatchingPattern {
 							}
 							mentionIndex = mentionIndex + 1;
 							relationEntities.add(newMention);
-							if (this.edgeType != null) {
-								if (patternElement.getvType() == PatternElement.edgeVType.inV) {
-									inVTypes.add(newMention.getType());
-								}
-								else if (patternElement.getvType() == PatternElement.edgeVType.outV) {
-									outVTypes.add(newMention.getType());
-								}
-								else {
-									System.err.println("Warning: The ExactPattern with '" + this.sequence + "' has an invalid vType definition.");
-								}
-							}
+//							if (this.edgeType != null) {
+//								if (patternElement.getvType() == PatternElement.edgeVType.inV) {
+//									inVTypes.add(newMention.getType());
+//								}
+//								else if (patternElement.getvType() == PatternElement.edgeVType.outV) {
+//									outVTypes.add(newMention.getType());
+//								}
+//								else {
+//									System.err.println("Warning: The ExactPattern with '" + this.sequence + "' has an invalid vType definition.");
+//								}
+//							}
 						}
 					}
 				}
@@ -262,7 +231,7 @@ public class ExactPattern implements MatchingPattern {
 		//build the new cyber-domain vertex or multiple vertices and connecting edge
 		CyberRelation newRelation = null;
 		if (this.edgeType != null) {
-			newRelation = new CyberRelation(relationEntities, this.edgeType, true, inVTypes, outVTypes);
+			newRelation = new CyberRelation(relationEntities, this.edgeType, true, this.inVTypes, this.outVTypes);
 		}
 		else if (this.vertexType != null) {
 			newRelation = new CyberRelation(relationEntities, this.vertexType, false);

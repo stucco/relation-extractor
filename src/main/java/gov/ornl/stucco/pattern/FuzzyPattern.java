@@ -23,45 +23,15 @@ import java.util.List;
 import java.util.Set;
  
 
-public class FuzzyPattern implements MatchingPattern {
+public class FuzzyPattern extends MatchingPattern {
 
 	public static final int FUZZY_MATCH_DISTANCE = 10;
-	
-	private List<PatternElement> sequence;
-	private String edgeType;
-	private String vertexType;
+
 	
 	public FuzzyPattern(List<PatternElement> seq, String edgeType, String vertexType) {
-		this.sequence = seq;
-		this.edgeType = edgeType;
-		this.vertexType = vertexType;
+		super(seq, edgeType, vertexType);
 	}
 
-	public List<PatternElement> getSequence() {
-		return sequence;
-	}
-
-	public void setSequence(List<PatternElement> sequence) {
-		this.sequence = sequence;
-	}
-
-	public String getEdgeType() {
-		return edgeType;
-	}
-
-	public void setEdgeType(String edgeType) {
-		this.edgeType = edgeType;
-	}
-
-	public String getVertexType() {
-		return vertexType;
-	}
-
-	public void setVertexType(String vertexType) {
-		this.vertexType = vertexType;
-	}
-
-	@Override
 	public List<CyberRelation> findPattern(Annotation doc) {
 		List<CyberRelation> relationships = new ArrayList<CyberRelation>();
 		System.err.println(">>> Finding fuzzy pattern matches ...");
@@ -79,8 +49,8 @@ public class FuzzyPattern implements MatchingPattern {
 		}
 		
 		//gather the vertex type names that are the inVertex types and those that are the outVertex types
-		Set<String> inVTypes = new HashSet<String>();
-		Set<String> outVTypes = new HashSet<String>();
+//		Set<String> inVTypes = new HashSet<String>();
+//		Set<String> outVTypes = new HashSet<String>();
 		
 		// First and last elements of the sequence should be labeled cyber entities
 		CyberEntity seqEntity1 = null;
@@ -88,36 +58,12 @@ public class FuzzyPattern implements MatchingPattern {
 		PatternElement seqElement = this.sequence.get(0);
 		if (seqElement instanceof CyberEntity) {
 			seqEntity1 = (CyberEntity)seqElement;
-			if (this.edgeType != null) {
-				if (seqEntity1.getvType() == PatternElement.edgeVType.inV) {
-					inVTypes.add(seqEntity1.getType());
-				}
-				else if (seqEntity1.getvType() == PatternElement.edgeVType.outV) {
-					outVTypes.add(seqEntity1.getType());
-				}
-				else {
-					System.err.println("Warning: The FuzzyPattern with '" + this.sequence + "' has an invalid vType definition.");
-				}
-			}
 		}
 		seqElement = this.sequence.get(this.sequence.size()-1);
 		if (seqElement instanceof CyberEntity) {
 			seqEntity2 = (CyberEntity)seqElement;
-			if (this.edgeType != null) {
-				if (seqEntity2.getvType() == PatternElement.edgeVType.inV) {
-					inVTypes.add(seqEntity2.getType());
-				}
-				else if (seqEntity2.getvType() == PatternElement.edgeVType.outV) {
-					outVTypes.add(seqEntity2.getType());
-				}
-				else {
-					System.err.println("Warning: The FuzzyPattern with '" + this.sequence + "' has an invalid vType definition.");
-				}
-			}
 		}
-		
-		
-		
+
 		for (int i=0; i<entities.size(); i++) {
 			CyberEntityMention docEntity1 = entities.get(i);
 			// Find the first sequence element in the doc's list of cyber entities
@@ -139,7 +85,7 @@ public class FuzzyPattern implements MatchingPattern {
 									entityMentionList.add(docEntity1);
 									entityMentionList.add(docEntity2);
 									if (this.edgeType != null) {
-										CyberRelation newRelation = new CyberRelation(entityMentionList, this.edgeType, true, inVTypes, outVTypes);
+										CyberRelation newRelation = new CyberRelation(entityMentionList, this.edgeType, true, this.inVTypes, this.outVTypes);
 										relationships.add(newRelation);
 									}
 									else if (this.vertexType != null) {
@@ -157,7 +103,7 @@ public class FuzzyPattern implements MatchingPattern {
 									entityMentionList.add(docEntity1);
 									entityMentionList.add(docEntity2);
 									if (this.edgeType != null) {
-										CyberRelation newRelation = new CyberRelation(entityMentionList, this.edgeType, true, inVTypes, outVTypes);
+										CyberRelation newRelation = new CyberRelation(entityMentionList, this.edgeType, true, this.inVTypes, this.outVTypes);
 										relationships.add(newRelation);
 									}
 									else if (this.vertexType != null) {

@@ -70,6 +70,14 @@ public class CyberRelation {
 		this.outVTypes.add(outVType);
 	}
 	
+	public void setInVType(Set<String> inVTypeSet) {
+		this.inVTypes = inVTypeSet;
+	}
+	
+	public void setOutVType(Set<String> outVTypeSet) {
+		this.outVTypes = outVTypeSet;
+	}
+	
 	public List<Vertex> getVertexList(String source) {
 		List<Vertex> vertices = new ArrayList<Vertex>();
 		if (this.isEdge) {

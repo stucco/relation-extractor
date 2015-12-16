@@ -58,8 +58,4 @@ public class Patterns implements Serializable {
 		return true;
 	}
 
-	public static void main(String[] args) {
-
-	}
-
 }
