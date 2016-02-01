@@ -1,5 +1,5 @@
 # Relation Extraction
-Library to create vertices from labeled entities, and edges from interpreted relationships between entities that are within unstructured text.
+Library to create vertices and edges from a document annotated with cyber-entity labels and a list of relationship patterns between these cyber entities.
 
 ## Dependency
 The Relation Extraction library shares object models with the Entity Extraction library. To install the dependency locally:
@@ -8,33 +8,55 @@ The Relation Extraction library shares object models with the Entity Extraction 
 	cd entity-extractor
 	mvn clean install
 
+## Relationship Patterns
+These patterns are defined in a JSON-formatted file. There are three types of patterns we will need to find:
+
+* The exact-match pattern consists of at least two cyber-entity labels, and words or part-of-speech (pos) tags.  The annotated document must match the pattern exactly with no extra words. 
+	
+		Example Text: “Tomcat from Apache”
+		Pattern: SW.PRODUCT, "from", SW.VENDOR
+	
+* The fuzzy-match pattern begins and ends with cyber-entity labels, but it allows for extra words to be present in the document that are not reflected in the pattern. The words, or pos tags, in the pattern must appear in the annotated document, but there can be extra words as well. The only restriction is the two entities are no more than 10 words apart in the document.
+	
+		Example Text: “Apache Tomcat’s latest update 8.0.22”
+		Pattern: SW.PRODUCT, “update”, SW.VERSION
+	
+* The parse-tree-path pattern defines a path through a sentence’s parse tree, where the first and last elements of the path are labeled cyber entities. 
+	
+		Example Parse Tree: (NP (NP (NNP Apache) (NNP Tomcat) (POS 's)) (JJS latest))
+		Pattern: NNP, NP, NNP
+	
+The majority of the knowledge graph's ontology is defined within this file, so the file can be modified while the extractor's mechanics remain the same. The file format is as follows:
+
+	{"Patterns": [
+	{"edgeType": "hasVulnerability", "patternType": "ExactPattern", "patternSequence": [{"class": "CyberEntity", "value": "sw.product", "vType": "outV"}, {"class": "Token", "value": "update"}, {"class": "Token", "value": "-LRB-"}, {"class": "CyberEntity", "value": "vuln.name", "vType": "inV"}]},
+	{"vertexType": "software", "patternType": "ExactPattern", "patternSequence": [{"class": "Token", "value": "versions"}, {"class": "Token", "value": "of"}, {"class": "CyberEntity", "value": "sw.product"}, {"class": "Token", "value": "are"}, {"class": "CyberEntity", "value": "sw.version"}, {"class": "POS", "value": "IN"}, {"class": "CyberEntity", "value": "sw.version"}]},
+	{"vertexType": "software", "patternType": "ParseTreePattern", "patternSequence": [{"class": "CyberEntity", "value": "sw.product"}, {"class": "TreeElement", "value": "NNP"}, ...]},
+	...
+	] }
+
 ## Input
-* The ontology JSON file, ([stucco_schema.json](https://github.com/stucco/ontology/stucco_schema.json)), read in from the STUCCO repository.
-* Output from the [Entity-Extractor](https://github.com/stucco/entity-extractor) as a [Sentences object](https://github.com/stucco/entity-extractor/blob/master/src/main/java/gov/ornl/stucco/entity/models/Sentences.java), which represents the list of words from the unstructured text, along with each word's part of speech tag, IOB tag, and domain label.
-* The source of the unstructured text
+* Output from the [Entity-Extractor](https://github.com/stucco/entity-extractor/tree/corenlp) as an Annotation object, which represents the sentences, list of words from the text, along with each word's part of speech tag and cyber domain label.
+* The String name of the document's source
+* A JSON file containing the set of patterns to find in the annotated document
+	
 
 ## Current Process
-* For each word, or phrase, labeled with a domain label:
-	* Use the domain label to find the vertex type in the ontology
-	* Search this sentence's set of previously created vertices, starting with the most recent
-		* If a vertex is found with the same type and it does not have the property specified by the current domain label, then update this vertex's properties with the current word/phrase
-		* Otherwise, create a new vertex of the corresponding type and with the appropriate property, then add it to the end of the set of vertices created for this sentence
+* For each pattern:
+	* Search the document for candidate instances and for each instance:
+		* If the pattern type is ExactPattern, then all tokens listed in the pattern sequence must match
+		* If the pattern type is FuzzyPattern, then all the cyber entities must match those in the pattern sequence with no more than 10 words between them, but there can be other tokens in the document that are not represented in the pattern sequence
+		* If the pattern type is ParseTreePattern, then the pattern sequence represents a path, between cyber entities, in the parse tree and all elements must match exactly
+
 	
-* For each pair of vertices created within 2 sentences of each other:
-	* Use the vertex types to search the ontology for an possible edge between them
-	* If such an edge is defined in the ontology, then create an edge instance between the pair of vertices in the subgraph
-
-See the [Relation Extraction Documentation](https://github.com/stucco/docs/wiki/relation-extraction) on the wiki for more details.
-
 ## Output
 * The GraphSON formatted subgraph of the vertices and edges created
 
 ## Usage
-	EntityExtractor entityExtractor = new EntityExtractor();
-	Sentences sentences = entityExtractor.getAnnotatedText("The first Critical update, MS13-088, deals with 10 vulnerabilities in Microsoft’s Internet Explorer (IE).");
-			
-	RelationExtractor relationExtractor = new RelationExtractor();
-	relationExtractor.getGraph("computerworld", sentences);
+	EntityLabeler labeler = new EntityLabeler();
+	Annotation doc = labeler.getAnnotatedDoc("My Doc", exampleText);
+	RelationExtractor rx = new RelationExtractor();
+	String graph = rx.createSubgraph(doc, "My source");
 	
 ## Test
 1) Install the dependency as described [above](https://github.com/stucco/relation-extractor#dependency)

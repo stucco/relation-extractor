@@ -17,9 +17,14 @@ public class Edge {
 	private String source;
 	
 	
-	public Edge(String id, String label) {
+	public Edge(String id, String label, String inV, String inVType, String outV, String outVType, String source) {
 		this._id = id;
 		this._label = label;
+		this._inV = inV;
+		this.inVType = inVType;
+		this._outV = outV;
+		this.outVType = outVType;
+		this.source = source;
 	}
 
 	public String get_id() {

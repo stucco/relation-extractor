@@ -1,44 +1,20 @@
 package gov.ornl.stucco;
 
-import gov.ornl.stucco.entity.models.Sentence;
-import gov.ornl.stucco.entity.models.Sentences;
-import gov.ornl.stucco.entity.models.Word;
+import edu.stanford.nlp.pipeline.Annotation;
+import gov.ornl.stucco.entity.EntityLabeler;
 
 import org.junit.Test;
 
 public class RelationExtractorTest {
-	private static String expectedGraph = "{ \"vertices\": [{\"_id\":\"software_0_0\",\"name\":\"software_0_0\",\"_type\":\"vertex\",\"vertexType\":\"software\",\"product\":\"Windows XP\",\"source\":\"nvd\",\"vendor\":\"Microsoft\",\"version\":\"before 2.8\"}," +
-			"{\"_id\":\"vulnerability_0_1\",\"name\":\"vulnerability_0_1\",\"_type\":\"vertex\",\"vertexType\":\"vulnerability\",\"source\":\"nvd\",\"description\":\"cross-site scripting vulnerability\"}," +
-			"{\"_id\":\"vulnerability_0_2\",\"name\":\"vulnerability_0_2\",\"_type\":\"vertex\",\"vertexType\":\"vulnerability\",\"source\":\"nvd\",\"description\":\"file.php\"}," +
-			"{\"_id\":\"CVE-2014-1234\",\"name\":\"CVE-2014-1234\",\"_type\":\"vertex\",\"vertexType\":\"vulnerability\",\"source\":\"nvd\"}],\n" +
-			"\"edges\": [{\"_id\":\"software_0_0__CVE-2014-1234\",\"_type\":\"edge\",\"_label\":\"hasVulnerability\",\"_inV\":\"CVE-2014-1234\",\"_outV\":\"software_0_0\",\"inVType\":\"vulnerability\",\"outVType\":\"software\",\"source\":\"nvd\"}," +
-			"{\"_id\":\"vulnerability_0_1__CVE-2014-1234\",\"_type\":\"edge\",\"_label\":\"sameAs\",\"_inV\":\"CVE-2014-1234\",\"_outV\":\"vulnerability_0_1\",\"inVType\":\"vulnerability\",\"outVType\":\"vulnerability\",\"source\":\"nvd\"}," +
-			"{\"_id\":\"vulnerability_0_2__CVE-2014-1234\",\"_type\":\"edge\",\"_label\":\"sameAs\",\"_inV\":\"CVE-2014-1234\",\"_outV\":\"vulnerability_0_2\",\"inVType\":\"vulnerability\",\"outVType\":\"vulnerability\",\"source\":\"nvd\"}," +
-			"{\"_id\":\"vulnerability_0_1__vulnerability_0_2\",\"_type\":\"edge\",\"_label\":\"sameAs\",\"_inV\":\"vulnerability_0_2\",\"_outV\":\"vulnerability_0_1\",\"inVType\":\"vulnerability\",\"outVType\":\"vulnerability\",\"source\":\"nvd\"}," +
-			"{\"_id\":\"software_0_0__vulnerability_0_2\",\"_type\":\"edge\",\"_label\":\"hasVulnerability\",\"_inV\":\"vulnerability_0_2\",\"_outV\":\"software_0_0\",\"inVType\":\"vulnerability\",\"outVType\":\"software\",\"source\":\"nvd\"}," +
-			"{\"_id\":\"software_0_0__vulnerability_0_1\",\"_type\":\"edge\",\"_label\":\"hasVulnerability\",\"_inV\":\"vulnerability_0_1\",\"_outV\":\"software_0_0\",\"inVType\":\"vulnerability\",\"outVType\":\"software\",\"source\":\"nvd\"}] }";
-	
-	private static String[] words = {"Microsoft", "Windows", "XP", "before", "2.8", "has", "cross-site", "scripting", "vulnerability", "in", "file.php", "(", "refer", "to", "CVE-2014-1234", ")", "."};
-	private static String[] iob = {"B", "B", "I", "B", "I", "O", "B", "I", "I", "O", "B", "O", "O", "O", "B", "O", "O"};
-	private static String[] labels = {"sw.vendor", "sw.product", "sw.product", "sw.version", "sw.version", "O", "vuln.relevant_term", "vuln.relevant_term", "vuln.relevant_term", "O", "vuln.symbol", "O", "O", "O", "vuln.name", "O", "O"};
+	private static String expectedGraph = "{ \"vertices\": [{\"_id\":\"1235\",\"name\":\"1235\",\"_type\":\"vertex\",\"vertexType\":\"software\",\"product\":\"2.8\",\"vendor\":\"before\",\"source\":\"a source\",\"version\":\"has\"}, {\"_id\":\"1236\",\"name\":\"1236\",\"_type\":\"vertex\",\"vertexType\":\"software\",\"product\":\"Tomcat\",\"vendor\":\"Apache\",\"source\":\"a source\",\"version\":\"'s latest\"}, {\"_id\":\"1237\",\"name\":\"1237\",\"_type\":\"vertex\",\"vertexType\":\"software\",\"vendor\":\"Microsoft\",\"source\":\"a source\"}, {\"_id\":\"1238\",\"name\":\"1238\",\"_type\":\"vertex\",\"vertexType\":\"software\",\"product\":\"2.8\",\"vendor\":\"before\",\"source\":\"a source\",\"version\":\"has\"}, {\"_id\":\"1241\",\"name\":\"1241\",\"_type\":\"vertex\",\"vertexType\":\"vulnerability\",\"source\":\"a source\",\"relevant_term\":\"cross-site scripting vulnerability in\"}, {\"_id\":\"1242\",\"name\":\"1242\",\"_type\":\"vertex\",\"vertexType\":\"software\",\"product\":\"Tomcat\",\"source\":\"a source\",\"version\":\"'s latest\"}], \"edges\": [{\"_id\":\"1237_1241\",\"_type\":\"edge\",\"_label\":\"hasVulnerability\",\"_inV\":\"1241\",\"_outV\":\"1237\",\"inVType\":\"vuln\",\"outVType\":\"sw\",\"source\":\"a source\"}, {\"_id\":\"1238_1241\",\"_type\":\"edge\",\"_label\":\"hasVulnerability\",\"_inV\":\"1241\",\"_outV\":\"1238\",\"inVType\":\"vuln\",\"outVType\":\"sw\",\"source\":\"a source\"}] }";
 
 	@Test
 	public void testGetGraph() {
-		Sentence sentence = new Sentence();
-		for (int i=0; i<words.length; i++) {
-			Word word = new Word(words[i]);
-			word.setPos("N");
-			word.setIob(iob[i]);
-			word.setDomainLabel(labels[i]);
-			word.setDomainScore(1.0);
-			sentence.addWord(word);
-		}
-		Sentences sentences = new Sentences();
-		sentences.addSentence(sentence);
-		
-		RelationExtractor relEx = new RelationExtractor();
-		String graph = relEx.getGraph("nvd", sentences);
-		
+		String testSentence = "Microsoft Windows XP before 2.8 has cross-site scripting vulnerability in file.php (refer to CVE-2014-1234). This is a new paragraph about Apache Tomcat's latest update 7.0.1. The software developer who inserted a major security flaw into OpenSSL 1.2.4.8, using the file foo/bar/blah.php has said the error was \"quite trivial\" despite the severity of its impact, according to a new report. The Sydney Morning Herald published an interview today with Robin Seggelmann, who added the flawed code to OpenSSL, the world's most popular library for implementing HTTPS encryption in websites, e-mail servers, and applications. The flaw can expose user passwords and potentially the private key used in a website's cryptographic certificate (whether private keys are at risk is still being determined)."; //"Unspecified vulnerability in the update check in Vanilla Forums before 2.0.18.8 has unspecified impact and remote attack vectors, related to 'object injection'.";
+		EntityLabeler labeler = new EntityLabeler();
+		Annotation doc = labeler.getAnnotatedDoc("My Doc", testSentence);
+		RelationExtractor rx = new RelationExtractor("src/main/resources/patterns_relations_abbrev.json");
+		String graph = rx.createSubgraph(doc, "a source");
 		assert(graph.equals(expectedGraph));
 	}
 
