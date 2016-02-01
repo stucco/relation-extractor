@@ -1,7 +1,0 @@
-{"Patterns": [
-{"vertexType": "software", "patternType": "ExactNotPattern", "patternSequence": [{"class": "CyberEntity", "value": "sw.product"}, {"class": "Token", "value": ","}, {"class": "Token", "value": "the"}, {"class": "Token", "value": "new"}, {"class": "Token", "value": "version"}, {"class": "Token", "value": "is"}, {"class": "CyberEntity", "value": "sw.version"}]},
-{"vertexType": "software", "patternType": "ExactNotPattern", "patternSequence": [{"class": "CyberEntity", "value": "sw.version"}, {"class": "Token", "value": "for"}, {"class": "CyberEntity", "value": "sw.product"}]},
-{"vertexType": "software", "patternType": "ExactNotPattern", "patternSequence": [ {"class": "Token", "value": "exceptions"}, {"class": "Token", "value": ":"}, {"class": "CyberEntity", "value": "sw.product"}, {"class": "CyberEntity", "value": "sw.version"}]},
-{"vertexType": "software", "patternType": "ExactNotPattern", "patternSequence": [{"class": "CyberEntity", "value": "sw.version"}, {"class": "Token", "value": ","}, {"class": "CyberEntity", "value": "sw.product"}]},
-{"vertexType": "software", "patternType": "ParseTreeNotPattern", "patternSequence": [{"class": "CyberEntity", "value": "sw.product"}, {"class": "TreeElement", "value": "NNP"}, {"class": "TreeElement", "value": "NP"}, {"class": "TreeElement", "value": "NP"}, {"class": "TreeElement", "value": "NP"}, {"class": "TreeElement", "value": "CD"}, {"class": "CyberEntity", "value": "sw.version"}]},
-] }

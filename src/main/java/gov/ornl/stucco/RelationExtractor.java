@@ -55,8 +55,8 @@ public class RelationExtractor {
 	}
 	
 	/**
+	 * @param doc annotated version of the unstructured text
 	 * @param source name of the data source
-	 * @param labeledEntities annotated version of the unstructured text
 	 * @return graph in GraphSON format
 	 */
 	public String createSubgraph(Annotation doc, String source) {

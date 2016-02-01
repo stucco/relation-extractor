@@ -1,6 +1,6 @@
 {
     "Patterns": [
-        {
+    {
             "patternSequence": [
                 {
                     "class": "CyberEntity",
@@ -19,73 +19,234 @@
             "vertexType": "software"
         },
         {
+            "edgeType": "hasVulnerability",
             "patternSequence": [
                 {
                     "class": "CyberEntity",
-                    "value": "sw.vendor",
-                    "vType": "outV"
+                    "vType": "outV",
+                    "value": "sw.symbol"
                 },
                 {
                     "class": "Token",
-                    "value": "Windows"
+                    "value": "refer"
                 },
                 {
-                    "class": "POS",
-                    "value": "NN"
-                },
-                {
-                    "class": "CyberEntity",
-                    "value": "sw.vendor",
-                    "vType": "outV"
+                    "class": "Token",
+                    "value": "to"
                 },
                 {
                     "class": "CyberEntity",
-                    "value": "sw.product",
-                    "vType": "outV"
-                },
-                {
-                    "class": "CyberEntity",
-                    "value": "sw.version",
-                    "vType": "outV"
-                },
-				{
-					"class": "CyberEntity",
-					"value": "vuln.relevant_term",
-					"vType": "inV"
-				}
+                    "vType": "inV",
+                    "value": "vuln.cve"
+                }
             ],
-            "patternType": "ExactPattern",
-            "edgeType": "hasVulnerability"
+            "patternType": "FuzzyPattern"
         },
         {
+            "vertexType": "software",
+            "patternSequence": [
+                {
+                    "class": "CyberEntity",
+                    "value": "sw.vendor"
+                },
+                {
+                    "class": "TreeElement",
+                    "value": "NNP"
+                },
+                {
+                    "class": "TreeElement",
+                    "value": "NP"
+                },
+                {
+                    "class": "CyberEntity",
+                    "value": "sw.product"
+                }
+            ],
+            "patternType": "ParseTreePattern"
+        },
+        {
+            "vertexType": "software",
             "patternSequence": [
                 {
                     "class": "CyberEntity",
                     "value": "sw.product"
                 },
                 {
+                    "class": "TreeElement",
+                    "value": "NP"
+                },
+                {
+                    "class": "TreeElement",
+                    "value": "NP"
+                },
+                {
+                    "class": "TreeElement",
+                    "value": "PP"
+                },
+                {
                     "class": "CyberEntity",
                     "value": "sw.version"
-                },
-                {
-                    "class": "Token",
-                    "value": "update"
-                },
-                {
-                    "class": "Token",
-                    "value": "7.0.1"
-                },
-                {
-                    "class": "Token",
-                    "value": "."
-                },
-                {
-                    "class": "Token",
-                    "value": "The"
                 }
             ],
-            "patternType": "ExactPattern",
-            "vertexType": "software"
+            "patternType": "ParseTreePattern"
+        },
+        {
+            "edgeType": "hasVulnerability",
+            "patternSequence": [
+                {
+                    "class": "CyberEntity",
+                    "vType": "outV",
+                    "value": "sw.product"
+                },
+                {
+                    "class": "TreeElement",
+                    "value": "NP"
+                },
+                {
+                    "class": "TreeElement",
+                    "value": "NP"
+                },
+                {
+                    "class": "TreeElement",
+                    "value": "S"
+                },
+                {
+                    "class": "TreeElement",
+                    "value": "VP"
+                },
+                {
+                    "class": "TreeElement",
+                    "value": "NP"
+                },
+                {
+                    "class": "TreeElement",
+                    "value": "NP"
+                },
+                {
+                    "class": "CyberEntity",
+                    "vType": "inV",
+                    "value": "vuln.relevant_term"
+                }
+            ],
+            "patternType": "ParseTreePattern"
+        },
+        {
+            "edgeType": "hasVulnerability",
+            "patternSequence": [
+                {
+                    "class": "CyberEntity",
+                    "vType": "outV",
+                    "value": "sw.product"
+                },
+                {
+                    "class": "TreeElement",
+                    "value": "NP"
+                },
+                {
+                    "class": "TreeElement",
+                    "value": "NP"
+                },
+                {
+                    "class": "TreeElement",
+                    "value": "S"
+                },
+                {
+                    "class": "TreeElement",
+                    "value": "VP"
+                },
+                {
+                    "class": "TreeElement",
+                    "value": "NP"
+                },
+                {
+                    "class": "TreeElement",
+                    "value": "PP"
+                },
+                {
+                    "class": "TreeElement",
+                    "value": "NP"
+                },
+                {
+                    "class": "TreeElement",
+                    "value": "PRN"
+                },
+                {
+                    "class": "TreeElement",
+                    "value": "S"
+                },
+                {
+                    "class": "TreeElement",
+                    "value": "VP"
+                },
+                {
+                    "class": "TreeElement",
+                    "value": "PP"
+                },
+                {
+                    "class": "TreeElement",
+                    "value": "NP"
+                },
+                {
+                    "class": "TreeElement",
+                    "value": "NN"
+                },
+                {
+                    "class": "CyberEntity",
+                    "vType": "inV",
+                    "value": "vuln.cve"
+                }
+            ],
+            "patternType": "ParseTreePattern"
+        },
+        {
+            "vertexType": "software",
+            "patternSequence": [
+                {
+                    "class": "CyberEntity",
+                    "value": "sw.product"
+                },
+                {
+                    "class": "TreeElement",
+                    "value": "NP"
+                },
+                {
+                    "class": "TreeElement",
+                    "value": "NP"
+                },
+                {
+                    "class": "TreeElement",
+                    "value": "S"
+                },
+                {
+                    "class": "TreeElement",
+                    "value": "VP"
+                },
+                {
+                    "class": "TreeElement",
+                    "value": "NP"
+                },
+                {
+                    "class": "TreeElement",
+                    "value": "PP"
+                },
+                {
+                    "class": "TreeElement",
+                    "value": "NP"
+                },
+                {
+                    "class": "TreeElement",
+                    "value": "NP"
+                },
+                {
+                    "class": "TreeElement",
+                    "value": "NN"
+                },
+                {
+                    "class": "CyberEntity",
+                    "value": "sw.symbol"
+                }
+            ],
+            "patternType": "ParseTreePattern"
         }
     ]
 }
