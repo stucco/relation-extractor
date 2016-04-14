@@ -8,6 +8,39 @@ The Relation Extraction library shares object models with the Entity Extraction 
 	cd entity-extractor
 	mvn clean install
 
+## Entity Types
+* Software
+	* Vendor
+	* Product
+	* Version
+* File
+	* Name
+* Function
+	* Name
+* Vulnerability
+	* Name
+	* Description
+	* CVE
+	* MS
+	
+## Relationship Types
+* Exploit_Target_Related_Observable
+
+		Exploit Target (e.g. vulnerability) --> Observable (e.g. software)
+	
+* Sub_Observable 
+
+		Observable (e.g. software) --> Observable (e.g. file)
+	
+* Software 
+
+		Software properties are part of the same Object
+	
+* Vulnerability 
+
+		Vulnerability properties are part of the same Object
+	
+
 ## Relationship Patterns
 These patterns are defined in a JSON-formatted file. There are three types of patterns we will need to find:
 
@@ -29,11 +62,12 @@ These patterns are defined in a JSON-formatted file. There are three types of pa
 The majority of the knowledge graph's ontology is defined within this file, so the file can be modified while the extractor's mechanics remain the same. The file format is as follows:
 
 	{"Patterns": [
-	{"edgeType": "hasVulnerability", "patternType": "ExactPattern", "patternSequence": [{"class": "CyberEntity", "value": "sw.product", "vType": "outV"}, {"class": "Token", "value": "update"}, {"class": "Token", "value": "-LRB-"}, {"class": "CyberEntity", "value": "vuln.name", "vType": "inV"}]},
+	{"edgeType": "Exploit_Target_Related_Observable", "patternType": "ExactPattern", "patternSequence": [{"class": "CyberEntity", "value": "sw.product", "vType": "inV"}, {"class": "Token", "value": "update"}, {"class": "Token", "value": "-LRB-"}, {"class": "CyberEntity", "value": "vuln.name", "vType": "outV"}]},
 	{"vertexType": "software", "patternType": "ExactPattern", "patternSequence": [{"class": "Token", "value": "versions"}, {"class": "Token", "value": "of"}, {"class": "CyberEntity", "value": "sw.product"}, {"class": "Token", "value": "are"}, {"class": "CyberEntity", "value": "sw.version"}, {"class": "POS", "value": "IN"}, {"class": "CyberEntity", "value": "sw.version"}]},
 	{"vertexType": "software", "patternType": "ParseTreePattern", "patternSequence": [{"class": "CyberEntity", "value": "sw.product"}, {"class": "TreeElement", "value": "NNP"}, ...]},
 	...
 	] }
+
 
 ## Input
 * Output from the [Entity-Extractor](https://github.com/stucco/entity-extractor/tree/corenlp) as an Annotation object, which represents the sentences, list of words from the text, along with each word's part of speech tag and cyber domain label.
@@ -50,7 +84,22 @@ The majority of the knowledge graph's ontology is defined within this file, so t
 
 	
 ## Output
-* The GraphSON formatted subgraph of the vertices and edges created
+* A JSON-formatted subgraph of the vertices and edges is created, which loosely resembles the STIX data model
+	
+	```
+	{ "vertices" : 
+		{
+			id1 : { "vertexType": "software", "vendor": "Apache", "product": "Tomcat"},
+			id2 : { "vertexType": "vulnerability", "description": "buffer overflow"},
+			...
+		},
+	  "edges" : 
+	  	[
+	  		{"id": "vuln_Tomcat_1234", "inV": "id1", "outV": "id2", "label": "Exploit_Target_Related_Observable"},
+			...
+	  	]
+	}
+	```
 
 ## Usage
 	EntityLabeler labeler = new EntityLabeler();
