@@ -37,6 +37,9 @@ public class ParseTreePattern extends MatchingPattern {
 		for (CoreMap sentence : sentences) {
 			Tree rootTree = sentence.get(TreeAnnotation.class);
 			List<CyberEntityMention> cyberMentions = sentence.get(CyberEntityMentionsAnnotation.class);
+			if ((cyberMentions == null) || (cyberMentions.isEmpty())) {
+				continue;
+			}
 			Map<CyberEntityMention, Tree> entitySubtreeMap = new HashMap<CyberEntityMention, Tree>();
 			
 			// Gather subtrees of cyber entity mentions
@@ -78,7 +81,6 @@ public class ParseTreePattern extends MatchingPattern {
 									}
 									// Found a matching path, so create a relationship
 									if (i == this.sequence.size()-1) {
-										System.out.println("\t\t\t FOUND RELATIONSHIP B/W " + cyberMention + " and " + cyberMention2);
 										List<CyberEntityMention> relationEntityList = new ArrayList<CyberEntityMention>();
 										relationEntityList.add(cyberMention);
 										relationEntityList.add(cyberMention2);
@@ -111,7 +113,6 @@ public class ParseTreePattern extends MatchingPattern {
 		int mentionStart = cyberMention.getHeadTokenStart();
 		int mentionEnd = cyberMention.getHeadTokenEnd() - 1;
 		
-		System.out.println("CyberEntityMention: " + cyberMention.getValue());
 		// Find the most dominate node in all paths from the first word in the cyber entity mention
 		//	to each of the other words. If this is a one-word cyber entity, then the POS of the word
 		//	will be the shared head node.
@@ -128,7 +129,6 @@ public class ParseTreePattern extends MatchingPattern {
 				}
 			}
 		}
-		System.out.println("Shared Head = " + currentHead + "\n");
 		
 		return currentHead;
 	}

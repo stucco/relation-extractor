@@ -131,21 +131,14 @@ public class Vertex {
 				+ vertexType + ", properties=" + properties + "]";
 	}
 	
-	public String toGraphSON() {
+	public String toJSON() {
 		StringBuilder graph = new StringBuilder();
-		
-		graph.append("{");
-		
-		graph.append("\"_id\":\"");
+		graph.append("\"");
 		graph.append(_id);
-		graph.append("\",");
-		
+		graph.append("\": {");
+
 		graph.append("\"name\":\"");
 		graph.append(name);
-		graph.append("\",");
-		
-		graph.append("\"_type\":\"");
-		graph.append(_type);
 		graph.append("\",");
 		
 		graph.append("\"vertexType\":\"");

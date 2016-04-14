@@ -15,6 +15,7 @@ public class PatternLoader {
 	public static Patterns loadPatterns(String patternFile) {
 		Patterns patterns = null;
 		try {
+			System.err.println("Loading relationship patterns from '" + patternFile + "'...");
 			InputStream inputStream = new FileInputStream(new File(patternFile));
 			mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 			patterns = mapper.readValue(inputStream, Patterns.class);

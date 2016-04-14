@@ -19,12 +19,12 @@
             "vertexType": "software"
         },
         {
-            "edgeType": "hasVulnerability",
+            "edgeType": "Exploit_Target_Related_Observable",
             "patternSequence": [
                 {
                     "class": "CyberEntity",
-                    "vType": "outV",
-                    "value": "sw.symbol"
+                    "vType": "inV",
+                    "value": "file.name"
                 },
                 {
                     "class": "Token",
@@ -36,7 +36,7 @@
                 },
                 {
                     "class": "CyberEntity",
-                    "vType": "inV",
+                    "vType": "outV",
                     "value": "vuln.cve"
                 }
             ],
@@ -91,11 +91,11 @@
             "patternType": "ParseTreePattern"
         },
         {
-            "edgeType": "hasVulnerability",
+            "edgeType": "Exploit_Target_Related_Observable",
             "patternSequence": [
                 {
                     "class": "CyberEntity",
-                    "vType": "outV",
+                    "vType": "inV",
                     "value": "sw.product"
                 },
                 {
@@ -124,18 +124,18 @@
                 },
                 {
                     "class": "CyberEntity",
-                    "vType": "inV",
-                    "value": "vuln.relevant_term"
+                    "vType": "outV",
+                    "value": "vuln.description"
                 }
             ],
             "patternType": "ParseTreePattern"
         },
         {
-            "edgeType": "hasVulnerability",
+            "edgeType": "Exploit_Target_Related_Observable",
             "patternSequence": [
                 {
                     "class": "CyberEntity",
-                    "vType": "outV",
+                    "vType": "inV",
                     "value": "sw.product"
                 },
                 {
@@ -192,17 +192,18 @@
                 },
                 {
                     "class": "CyberEntity",
-                    "vType": "inV",
+                    "vType": "outV",
                     "value": "vuln.cve"
                 }
             ],
             "patternType": "ParseTreePattern"
         },
         {
-            "vertexType": "software",
+            "edgeType": "Sub_Observable",
             "patternSequence": [
                 {
                     "class": "CyberEntity",
+                    "vType": "outV",
                     "value": "sw.product"
                 },
                 {
@@ -243,7 +244,8 @@
                 },
                 {
                     "class": "CyberEntity",
-                    "value": "sw.symbol"
+                    "vType": "inV",
+                    "value": "file.name"
                 }
             ],
             "patternType": "ParseTreePattern"

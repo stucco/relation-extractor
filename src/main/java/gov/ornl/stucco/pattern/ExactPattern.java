@@ -168,7 +168,7 @@ public class ExactPattern extends MatchingPattern {
 //						}
 //					}
 				}
-				else if (!candidateToken.get(CyberAnnotation.class).equalsIgnoreCase(patternElement.getValue())) {
+				else if (!(candidateToken.get(CyberAnnotation.class).toString()).equalsIgnoreCase(patternElement.getValue())) {
 					return null;
 				}
 				else {
