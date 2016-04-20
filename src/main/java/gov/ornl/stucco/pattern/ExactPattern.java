@@ -18,9 +18,7 @@ import gov.ornl.stucco.pattern.elements.PatternElement;
 import gov.ornl.stucco.pattern.elements.Token;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class ExactPattern extends MatchingPattern {
 

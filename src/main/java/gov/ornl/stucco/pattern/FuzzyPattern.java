@@ -8,7 +8,6 @@ import edu.stanford.nlp.ling.CoreAnnotations.TokensAnnotation;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.util.CoreMap;
-import gov.ornl.stucco.entity.CyberEntityAnnotator.CyberAnnotation;
 import gov.ornl.stucco.entity.CyberEntityAnnotator.CyberEntityMentionsAnnotation;
 import gov.ornl.stucco.entity.models.CyberEntityMention;
 import gov.ornl.stucco.model.CyberRelation;
@@ -18,9 +17,7 @@ import gov.ornl.stucco.pattern.elements.PatternElement;
 import gov.ornl.stucco.pattern.elements.Token;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
  
 
 public class FuzzyPattern extends MatchingPattern {

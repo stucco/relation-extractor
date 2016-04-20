@@ -16,7 +16,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 	@Type(value = TreeElement.class)
 })
 public abstract class PatternElement {
-	private static final long serialVersionUID = 1L;
 	
 	public static enum edgeVType {
 		outV,

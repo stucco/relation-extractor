@@ -27,7 +27,7 @@
   	<dependency>
   		<groupId>com.fasterxml.jackson.core</groupId>
   		<artifactId>jackson-databind</artifactId>
-  		<version>2.5.3</version>
+  		<version>2.7.0</version>
 	</dependency>
 	<dependency>
     	<groupId>junit</groupId>
@@ -72,7 +72,7 @@
         <resource>
             <directory>src/main/resources</directory>
             <includes>
-                <include>patterns_relations.json</include>
+                <include>patterns/patterns_relations.json</include>
             </includes>
         </resource>
     </resources>

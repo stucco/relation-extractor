@@ -9,9 +9,7 @@ import java.util.Map;
  */
 public class Vertex {
 	private static long uid = 1234;
-	
-	private static final String _type = "vertex";
-			
+				
 	private String _id;
 	private String name;
 	private String vertexType;

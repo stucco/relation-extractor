@@ -1,19 +1,13 @@
 package gov.ornl.stucco;
 
-import edu.stanford.nlp.ie.machinereading.structure.Span;
-import edu.stanford.nlp.ling.CoreAnnotations.PartOfSpeechAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.TextAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.TokensAnnotation;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.Annotation;
-import edu.stanford.nlp.trees.Tree;
-import edu.stanford.nlp.trees.TreeCoreAnnotations.TreeAnnotation;
 import edu.stanford.nlp.util.CoreMap;
 import gov.ornl.stucco.entity.CyberEntityAnnotator.CyberAnnotation;
-import gov.ornl.stucco.entity.CyberEntityAnnotator.CyberEntityMentionsAnnotation;
 import gov.ornl.stucco.entity.EntityLabeler;
-import gov.ornl.stucco.entity.models.CyberEntityMention;
 import gov.ornl.stucco.graph.Edge;
 import gov.ornl.stucco.graph.Vertex;
 import gov.ornl.stucco.model.CyberRelation;
@@ -33,7 +27,7 @@ import java.util.List;
 public class RelationExtractor {
 		
 	public static final String SOURCE_PROPERTY = "source";
-	private static final String DEFAULT_PATTERNS = "patterns_relations.json";
+	private static final String DEFAULT_PATTERNS = "patterns/patterns_relations.json";
 	
 	private Patterns patterns;
 	private List<CyberRelation> relationships;
@@ -115,47 +109,12 @@ public class RelationExtractor {
 		for ( CoreMap sentence : sentences) {
 			// Label cyber entities appropriately
 			for ( CoreLabel token : sentence.get(TokensAnnotation.class)) {
-//				String word = token.get(TextAnnotation.class);
-//				if (word.equalsIgnoreCase("Windows") || word.equalsIgnoreCase("XP")) {
-//					token.set(CyberAnnotation.class, "sw.product");
-//				}
-//				else if (word.equalsIgnoreCase("before") || word.equalsIgnoreCase("2.8")) {
-//					token.set(CyberAnnotation.class, "sw.version");
-//				}
-//				else if (word.equalsIgnoreCase("has") || word.equalsIgnoreCase("in")) {
-//					token.set(CyberAnnotation.class, "O");
-//				}
-//				else if (word.equalsIgnoreCase("cross-site") || word.equalsIgnoreCase("scripting") || word.equalsIgnoreCase("vulnerability")) {
-//					token.set(CyberAnnotation.class, "vuln.description");
-//				}
-//				else if (word.equalsIgnoreCase("file.php")) {
-//					token.set(CyberAnnotation.class, "sw.file");
-//				}
-//				else if (word.equalsIgnoreCase("CVE-2014-1234")) {
-//					token.set(CyberAnnotation.class, "vuln.cve");
-//				}
 				System.out.println(token.get(TextAnnotation.class) + "\t\t" + token.get(CyberAnnotation.class));
 			}
 			System.out.println();
-//			CyberEntityMention e1 = new CyberEntityMention(CyberEntityMention.makeUniqueId(), sentence, new Span(0,1), new Span(0,1), "sw", "vendor", null);
-//			CyberEntityMention e2 = new CyberEntityMention(CyberEntityMention.makeUniqueId(), sentence, new Span(1,3), new Span(1,3), "sw", "product", null);
-//			CyberEntityMention e3 = new CyberEntityMention(CyberEntityMention.makeUniqueId(), sentence, new Span(3,5), new Span(3,5), "sw", "version", null);
-//			CyberEntityMention e4 = new CyberEntityMention(CyberEntityMention.makeUniqueId(), sentence, new Span(6,9), new Span(6,9), "vuln", "description", null);
-//			CyberEntityMention e5 = new CyberEntityMention(CyberEntityMention.makeUniqueId(), sentence, new Span(10,11), new Span(10,11), "sw", "file", null);
-//			CyberEntityMention e6 = new CyberEntityMention(CyberEntityMention.makeUniqueId(), sentence, new Span(14,15), new Span(14,15), "vuln", "cve", null);
-//			List<CyberEntityMention> mentionList = new ArrayList<CyberEntityMention>();
-//			mentionList.add(e1);
-//			mentionList.add(e2);
-//			mentionList.add(e3);
-//			mentionList.add(e4);
-//			mentionList.add(e5);
-//			mentionList.add(e6);
-//			sentence.set(CyberEntityMentionsAnnotation.class, mentionList);
-////			System.out.println("Entities:\n" + sentence.get(CyberEntityMentionsAnnotation.class));
-//////			System.out.println("Semantic Graph:\n" + sentence.get(CollapsedCCProcessedDependenciesAnnotation.class));
 		}
 
-		RelationExtractor rx = new RelationExtractor("/Users/k5y/Documents/Projects/STUCCO/Workspace/relation-extractor/src/main/resources/patterns_relations_abbrev.json");
+		RelationExtractor rx = new RelationExtractor("src/main/resources/patterns_relations_abbrev.json");
 		System.out.println(rx.createSubgraph(doc, "CNN"));
 		
 	}
