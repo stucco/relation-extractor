@@ -47,15 +47,7 @@ public class Vertex {
 	}
 
 	public void setVertexType(String vertexType) {
-//		if (vertexType.equalsIgnoreCase("sw")) {
-//			this.vertexType = "software";
-//		}
-//		else if (vertexType.equalsIgnoreCase("vuln")) {
-//			this.vertexType = "vulnerability";
-//		}
-//		else {
 			this.vertexType = vertexType;
-//		}
 	}
 
 	public Map<String, String> getProperties() {

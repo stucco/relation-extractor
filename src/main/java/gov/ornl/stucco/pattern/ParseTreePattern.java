@@ -29,7 +29,6 @@ public class ParseTreePattern extends MatchingPattern {
 	//		in this sentence.
 	public List<CyberRelation> findPattern(Annotation doc) {
 		List<CyberRelation> relationships = new ArrayList<CyberRelation>();
-		System.err.println(">>> Finding parse-tree pattern matches ...");
 		
 		List<CoreMap> sentences = doc.get(SentencesAnnotation.class);
 		// Parse trees are only constructed per sentence, so there is no paths

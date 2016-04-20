@@ -28,7 +28,6 @@ public class ExactPattern extends MatchingPattern {
 
 	public List<CyberRelation> findPattern(Annotation doc) {
 		List<CyberRelation> relationships = new ArrayList<CyberRelation>();
-		System.err.println(">>> Finding exact pattern matches ...");
 		
 		//get the cyber entity elements from the pattern to find in the sentence
 		//Note: patterns have at least 2 cyber entities to make a vertex or edge

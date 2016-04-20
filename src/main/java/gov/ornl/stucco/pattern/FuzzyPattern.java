@@ -31,7 +31,6 @@ public class FuzzyPattern extends MatchingPattern {
 
 	public List<CyberRelation> findPattern(Annotation doc) {
 		List<CyberRelation> relationships = new ArrayList<CyberRelation>();
-		System.err.println(">>> Finding fuzzy pattern matches ...");
 		
 		// Collect all document's cyber entity mentions
 		// Note: patterns can span sentences
