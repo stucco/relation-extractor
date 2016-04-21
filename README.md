@@ -69,7 +69,7 @@ The majority of the knowledge graph's ontology is defined within this file, so t
 
 
 ## Input
-* Output from the [Entity-Extractor](https://github.com/stucco/entity-extractor/tree/corenlp) as an Annotation object, which represents the sentences, list of words from the text, along with each word's part of speech tag and cyber domain label.
+* Output from the [Entity-Extractor](https://github.com/stucco/entity-extractor) as an Annotation object, which represents the sentences, list of words from the text, along with each word's part of speech tag and cyber domain label.
 * The String name of the document's source
 * A JSON file containing the set of patterns to find in the annotated document
 	
