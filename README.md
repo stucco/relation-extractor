@@ -24,22 +24,21 @@ The Relation Extraction library shares object models with the Entity Extraction 
 	* MS
 	
 ## Relationship Types
-* Exploit_Target_Related_Observable
+* Exploit_Target_Related_Observable Edge
 
 		Exploit Target (e.g. vulnerability) --> Observable (e.g. software)
 	
-* Sub_Observable 
+* Sub_Observable Edge
 
 		Observable (e.g. software) --> Observable (e.g. file)
 	
-* Software 
+* Software, File, Function, Vulnerability Vertices
 
-		Software properties are part of the same Object
-	
-* Vulnerability 
+		Software/file/function/vulnerability properties are part of the same vertex
+		
+		Example: "... **MS15-035**, which addresses a **remote code execution** bug ..."
+		"MS15-035" is extracted as a vulnerability MS property, and "remote code execution" is extracted as a vulnerability description property. This type of relationship indicates that both properties are describing the same vulnerability object.
 
-		Vulnerability properties are part of the same Object
-	
 
 ## Relationship Patterns
 These patterns are defined in a JSON-formatted file. There are three types of patterns we will need to find:
@@ -47,17 +46,17 @@ These patterns are defined in a JSON-formatted file. There are three types of pa
 * The exact-match pattern consists of at least two cyber-entity labels, and words or part-of-speech (pos) tags.  The annotated document must match the pattern exactly with no extra words. 
 	
 		Example Text: “Tomcat from Apache”
-		Pattern: SW.PRODUCT, "from", SW.VENDOR
+		Pattern: <SW.PRODUCT>, "from", <SW.VENDOR>
 	
 * The fuzzy-match pattern begins and ends with cyber-entity labels, but it allows for extra words to be present in the document that are not reflected in the pattern. The words, or pos tags, in the pattern must appear in the annotated document, but there can be extra words as well. The only restriction is the two entities are no more than 10 words apart in the document.
 	
 		Example Text: “Apache Tomcat’s latest update 8.0.22”
-		Pattern: SW.PRODUCT, “update”, SW.VERSION
+		Pattern: <SW.PRODUCT>, “update”, <SW.VERSION>
 	
 * The parse-tree-path pattern defines a path through a sentence’s parse tree, where the first and last elements of the path are labeled cyber entities. 
 	
 		Example Parse Tree: (NP (NP (NNP Apache) (NNP Tomcat) (POS 's)) (JJS latest))
-		Pattern: NNP, NP, NNP
+		Pattern: <SW.VENDOR> -- NNP -- NP -- NNP -- <SW.PRODUCT>
 	
 The majority of the knowledge graph's ontology is defined within this file, so the file can be modified while the extractor's mechanics remain the same. The file format is as follows:
 
