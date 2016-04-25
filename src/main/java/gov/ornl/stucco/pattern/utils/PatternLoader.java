@@ -13,14 +13,20 @@ public class PatternLoader {
 	private static ObjectMapper mapper = new ObjectMapper();
 
 	public static Patterns loadPatterns(String patternFile) {
+		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		
+		System.err.println("Loading relationship patterns from '" + patternFile + "'...");
 		Patterns patterns = null;
 		try {
-			System.err.println("Loading relationship patterns from '" + patternFile + "'...");
-			InputStream inputStream = new FileInputStream(new File(patternFile));
-			mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+			InputStream inputStream = PatternLoader.class.getClassLoader().getResourceAsStream(patternFile);
 			patterns = mapper.readValue(inputStream, Patterns.class);
-		} catch (Exception ex) {
-			ex.printStackTrace();
+		} catch (Exception e) {
+			try {
+				InputStream inputStream = new FileInputStream(new File(patternFile));
+				patterns = mapper.readValue(inputStream, Patterns.class);
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
 		}
 		
 		return patterns;
