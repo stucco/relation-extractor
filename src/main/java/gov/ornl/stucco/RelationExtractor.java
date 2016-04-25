@@ -66,7 +66,7 @@ public class RelationExtractor {
 			edges.addAll(relationEdges);
 		}
 		
-		graphBuilder.append("{ \"vertices\": {");
+		graphBuilder.append("{\"vertices\": {");
 		for (int i=0; i<vertices.size(); i++) {
 			Vertex vertex1 = vertices.get(i);
 			graphBuilder.append(vertex1.toJSON());

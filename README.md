@@ -24,11 +24,11 @@ The Relation Extraction library shares object models with the Entity Extraction 
 	* MS
 	
 ## Relationship Types
-* Exploit_Target_Related_Observable Edge
+* ExploitTargetRelatedObservable Edge
 
 		Exploit Target (e.g. vulnerability) --> Observable (e.g. software)
 	
-* Sub_Observable Edge
+* Sub-Observable Edge
 
 		Observable (e.g. software) --> Observable (e.g. file)
 	
@@ -61,7 +61,7 @@ These patterns are defined in a JSON-formatted file. There are three types of pa
 The majority of the knowledge graph's ontology is defined within this file, so the file can be modified while the extractor's mechanics remain the same. The file format is as follows:
 
 	{"Patterns": [
-	{"edgeType": "Exploit_Target_Related_Observable", "patternType": "ExactPattern", "patternSequence": [{"class": "CyberEntity", "value": "sw.product", "vType": "inV"}, {"class": "Token", "value": "update"}, {"class": "Token", "value": "-LRB-"}, {"class": "CyberEntity", "value": "vuln.name", "vType": "outV"}]},
+	{"edgeType": "ExploitTargetRelatedObservable", "patternType": "ExactPattern", "patternSequence": [{"class": "CyberEntity", "value": "sw.product", "vType": "inV"}, {"class": "Token", "value": "update"}, {"class": "Token", "value": "-LRB-"}, {"class": "CyberEntity", "value": "vuln.name", "vType": "outV"}]},
 	{"vertexType": "software", "patternType": "ExactPattern", "patternSequence": [{"class": "Token", "value": "versions"}, {"class": "Token", "value": "of"}, {"class": "CyberEntity", "value": "sw.product"}, {"class": "Token", "value": "are"}, {"class": "CyberEntity", "value": "sw.version"}, {"class": "POS", "value": "IN"}, {"class": "CyberEntity", "value": "sw.version"}]},
 	{"vertexType": "software", "patternType": "ParseTreePattern", "patternSequence": [{"class": "CyberEntity", "value": "sw.product"}, {"class": "TreeElement", "value": "NNP"}, ...]},
 	...
@@ -94,7 +94,7 @@ The majority of the knowledge graph's ontology is defined within this file, so t
 		},
 	  "edges" : 
 	  	[
-	  		{"id": "vuln_Tomcat_1234", "inV": "id1", "outV": "id2", "label": "Exploit_Target_Related_Observable"},
+	  		{"id": "vuln_Tomcat_1234", "inV": "id1", "outV": "id2", "label": "ExploitTargetRelatedObservable"},
 			...
 	  	]
 	}

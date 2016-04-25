@@ -117,7 +117,7 @@ public class Vertex {
 
 	@Override
 	public String toString() {
-		return "Vertex [_id=" + _id + ", name=" + name + ", vertexType="
+		return "[_id=" + _id + ", name=" + name + ", vertexType="
 				+ vertexType + ", properties=" + properties + "]";
 	}
 	

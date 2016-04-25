@@ -19,7 +19,7 @@
             "vertexType": "software"
         },
         {
-            "edgeType": "Exploit_Target_Related_Observable",
+            "edgeType": "ExploitTargetRelatedObservable",
             "patternSequence": [
                 {
                     "class": "CyberEntity",
@@ -91,7 +91,7 @@
             "patternType": "ParseTreePattern"
         },
         {
-            "edgeType": "Exploit_Target_Related_Observable",
+            "edgeType": "ExploitTargetRelatedObservable",
             "patternSequence": [
                 {
                     "class": "CyberEntity",
@@ -131,7 +131,7 @@
             "patternType": "ParseTreePattern"
         },
         {
-            "edgeType": "Exploit_Target_Related_Observable",
+            "edgeType": "ExploitTargetRelatedObservable",
             "patternSequence": [
                 {
                     "class": "CyberEntity",
@@ -199,7 +199,7 @@
             "patternType": "ParseTreePattern"
         },
         {
-            "edgeType": "Sub_Observable",
+            "edgeType": "Sub-Observable",
             "patternSequence": [
                 {
                     "class": "CyberEntity",

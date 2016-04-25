@@ -9,9 +9,9 @@ public class Edge {
 	private static final String _type = "edge";
 	
 	private String _id;
-	private String _label;
-	private String _inV;
-	private String _outV;
+	private String relation;
+	private String inVertID;
+	private String outVertID;
 	private String inVType;
 	private String outVType;
 	private String source;
@@ -19,10 +19,10 @@ public class Edge {
 	
 	public Edge(String id, String label, String inV, String inVType, String outV, String outVType, String source) {
 		this._id = id;
-		this._label = label;
-		this._inV = inV;
+		this.relation = label;
+		this.inVertID = inV;
 		this.inVType = inVType;
-		this._outV = outV;
+		this.outVertID = outV;
 		this.outVType = outVType;
 		this.source = source;
 	}
@@ -36,27 +36,27 @@ public class Edge {
 	}
 
 	public String get_label() {
-		return _label;
+		return relation;
 	}
 
 	public void set_label(String _label) {
-		this._label = _label;
+		this.relation = _label;
 	}
 
 	public String get_inV() {
-		return _inV;
+		return inVertID;
 	}
 
 	public void set_inV(String _inV) {
-		this._inV = _inV;
+		this.inVertID = _inV;
 	}
 
 	public String get_outV() {
-		return _outV;
+		return outVertID;
 	}
 
 	public void set_outV(String _outV) {
-		this._outV = _outV;
+		this.outVertID = _outV;
 	}
 
 	public String getInVType() {
@@ -92,9 +92,9 @@ public class Edge {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((_id == null) ? 0 : _id.hashCode());
-		result = prime * result + ((_inV == null) ? 0 : _inV.hashCode());
-		result = prime * result + ((_label == null) ? 0 : _label.hashCode());
-		result = prime * result + ((_outV == null) ? 0 : _outV.hashCode());
+		result = prime * result + ((inVertID == null) ? 0 : inVertID.hashCode());
+		result = prime * result + ((relation == null) ? 0 : relation.hashCode());
+		result = prime * result + ((outVertID == null) ? 0 : outVertID.hashCode());
 		result = prime * result + ((inVType == null) ? 0 : inVType.hashCode());
 		result = prime * result
 				+ ((outVType == null) ? 0 : outVType.hashCode());
@@ -116,20 +116,20 @@ public class Edge {
 				return false;
 		} else if (!_id.equals(other._id))
 			return false;
-		if (_inV == null) {
-			if (other._inV != null)
+		if (inVertID == null) {
+			if (other.inVertID != null)
 				return false;
-		} else if (!_inV.equals(other._inV))
+		} else if (!inVertID.equals(other.inVertID))
 			return false;
-		if (_label == null) {
-			if (other._label != null)
+		if (relation == null) {
+			if (other.relation != null)
 				return false;
-		} else if (!_label.equals(other._label))
+		} else if (!relation.equals(other.relation))
 			return false;
-		if (_outV == null) {
-			if (other._outV != null)
+		if (outVertID == null) {
+			if (other.outVertID != null)
 				return false;
-		} else if (!_outV.equals(other._outV))
+		} else if (!outVertID.equals(other.outVertID))
 			return false;
 		if (inVType == null) {
 			if (other.inVType != null)
@@ -151,8 +151,8 @@ public class Edge {
 
 	@Override
 	public String toString() {
-		return "Edge [_id=" + _id + ", _label=" + _label + ", _inV=" + _inV
-				+ ", _outV=" + _outV + ", inVType=" + inVType + ", outVType="
+		return "[_id=" + _id + ", relation=" + relation + ", inVertID=" + inVertID
+				+ ", outVertID=" + outVertID + ", inVType=" + inVType + ", outVType="
 				+ outVType + ", source=" + source + "]";
 	}
 	
@@ -161,36 +161,16 @@ public class Edge {
 		
 		graph.append("{");
 		
-		graph.append("\"_id\":\"");
-		graph.append(_id);
+		graph.append("\"inVertID\":\"");
+		graph.append(inVertID);
 		graph.append("\",");
 		
-		graph.append("\"_type\":\"");
-		graph.append(_type);
+		graph.append("\"outVertID\":\"");
+		graph.append(outVertID);
 		graph.append("\",");
 		
-		graph.append("\"_label\":\"");
-		graph.append(_label);
-		graph.append("\",");
-		
-		graph.append("\"_inV\":\"");
-		graph.append(_inV);
-		graph.append("\",");
-		
-		graph.append("\"_outV\":\"");
-		graph.append(_outV);
-		graph.append("\",");
-		
-		graph.append("\"inVType\":\"");
-		graph.append(inVType);
-		graph.append("\",");
-		
-		graph.append("\"outVType\":\"");
-		graph.append(outVType);
-		graph.append("\",");
-		
-		graph.append("\"source\":\"");
-		graph.append(source);
+		graph.append("\"relation\":\"");
+		graph.append(relation);
 		
 		graph.append("\"}");
 		
