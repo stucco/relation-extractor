@@ -1,50 +1,36 @@
 package gov.ornl.stucco.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import gov.ornl.stucco.RelationExtractor;
-import gov.ornl.stucco.entity.models.CyberEntityMention;
+import gov.ornl.stucco.entity.models.CyberEntityType;
 import gov.ornl.stucco.graph.Edge;
 import gov.ornl.stucco.graph.Vertex;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import gov.ornl.stucco.relationprediction.GenericCyberEntityTextRelationship;
 
 public class CyberRelation {
 	
-	private List<CyberEntityMention> cyberEntities;
+	private CyberEntityType entityType1;
+	private String entity1;
+	private CyberEntityType entityType2;
+	private String entity2;
 	private String relationshipName;
 	private boolean isEdge;
-	private Set<String> inVTypes;
-	private Set<String> outVTypes;
 	
-	public CyberRelation(List<CyberEntityMention> entities, String relationship, boolean isEdge, Set<String> inVTypes, Set<String> outVTypes) {
-		this.cyberEntities = entities;
+	public CyberRelation(CyberEntityType type1, String entity1, CyberEntityType type2, String entity2, String relationship, boolean isEdge) {
+		this.entityType1 = type1;
+		this.entity1 = entity1;
+		this.entityType2 = type2;
+		this.entity2 = entity2;
 		this.relationshipName = relationship;
 		this.isEdge = isEdge;
-		this.inVTypes = inVTypes;
-		this.outVTypes = outVTypes;
 	}
 	
-	public CyberRelation(List<CyberEntityMention> entities, String relationship, boolean isEdge) {
-		this(entities, relationship, isEdge, new HashSet<String>(), new HashSet<String>());
+	public CyberRelation(CyberEntityType type1, String entity1, CyberEntityType type2, String entity2, String relationship) {
+		this(type1, entity1, type2, entity2, relationship, (relationship.equalsIgnoreCase(GenericCyberEntityTextRelationship.SAME_VERTEX)) ? false : true);
 	}
 	
-	public CyberRelation(String relationship, boolean isEdge) {
-		this(new ArrayList<CyberEntityMention>(), relationship, isEdge);
-	}
-
-	public List<CyberEntityMention> getCyberEntities() {
-		return cyberEntities;
-	}
-
-	public void setCyberEntities(List<CyberEntityMention> cyberEntities) {
-		this.cyberEntities = cyberEntities;
-	}
-	
-	public void addCyberEntity(CyberEntityMention cyberEntity) {
-		this.cyberEntities.add(cyberEntity);
-	}
 
 	public String getRelationshipName() {
 		return relationshipName;
@@ -60,22 +46,6 @@ public class CyberRelation {
 
 	public void setIsEdge(boolean isEdge) {
 		this.isEdge = isEdge;
-	}
-	
-	public void addInVType(String inVType) {
-		this.inVTypes.add(inVType);
-	}
-	
-	public void addOutVType(String outVType) {
-		this.outVTypes.add(outVType);
-	}
-	
-	public void setInVType(Set<String> inVTypeSet) {
-		this.inVTypes = inVTypeSet;
-	}
-	
-	public void setOutVType(Set<String> outVTypeSet) {
-		this.outVTypes = outVTypeSet;
 	}
 	
 	public List<Vertex> getVertexList(String source) {
@@ -94,28 +64,23 @@ public class CyberRelation {
 	
 	private List<Vertex> createVertexList(String source) {
 		List<Vertex> newVertices = new ArrayList<Vertex>();
-		if ((this.cyberEntities != null) && (!this.cyberEntities.isEmpty())) {
-			
-			for (CyberEntityMention mention : this.cyberEntities) {
-				Vertex v = null;
-				v = new Vertex(mention.getType());
-				
-				boolean exists = false;
-				for (int i=newVertices.size()-1; i>=0; i--) {
-					Vertex existingV = newVertices.get(i);
-					if ((existingV.getVertexType().equalsIgnoreCase(v.getVertexType())) && (existingV.getProperty(mention.getSubType()) == null)) {
-						v = existingV;
-						exists = true;
-						break;
-					}
-				}
-				v.addProperty(mention.getSubType(), mention.getValue());
-				v.addProperty(RelationExtractor.SOURCE_PROPERTY, source);
-				if (!exists) {
-					newVertices.add(v);
-				}
-			}
-			
+		
+		Vertex v1 = null;
+		
+		if ((entity1 != null) && (entityType1 != null) ) {
+			v1 = new Vertex(entityType1.getFullCyberType());
+			v1.addProperty(entityType1.getCyberSubType(), entity1);
+			v1.addProperty(RelationExtractor.SOURCE_PROPERTY, source);
+			newVertices.add(v1);
+		}
+		
+		Vertex v2 = null;
+		
+		if ((entity2 != null) && (entityType2 != null) ) {
+			v2 = new Vertex(entityType2.getFullCyberType());
+			v2.addProperty(entityType2.getCyberSubType(), entity2);
+			v2.addProperty(RelationExtractor.SOURCE_PROPERTY, source);
+			newVertices.add(v2);
 		}
 		
 		return newVertices;
@@ -124,45 +89,40 @@ public class CyberRelation {
 	private Vertex createVertex(String source) {
 		Vertex v = null;
 		
-		if ((this.cyberEntities != null) && (!this.cyberEntities.isEmpty())) {
-			v = new Vertex(this.relationshipName);
-			
-			for (CyberEntityMention mention : this.cyberEntities) {
-				v.addProperty(mention.getSubType(), mention.getValue());
-			}
+		if ((entity1 != null) && (entityType1 != null) && (entity2 != null) && (entityType2 != null)) {
+			v = new Vertex(entityType1.getFullCyberType());
+			v.addProperty(entityType1.getCyberSubType(), entity1);
+			v.addProperty(entityType2.getCyberSubType(), entity2);
 			v.addProperty(RelationExtractor.SOURCE_PROPERTY, source);
-			
 		}
 
 		return v;
 	}
 	
-	public List<Edge> getEdgeList(List<Vertex> vertices, String source) {
+	public List<Edge> getEdgeList(Vertex v1, Vertex v2, String source) {
 		List<Edge> edges = new ArrayList<Edge>();
 
 		if (this.isEdge) {
-			if ((vertices == null) || (vertices.isEmpty())) {
-				vertices = getVertexList(source);
+			
+			if (v1.getVertexType().equalsIgnoreCase("vulnerability")) {
+				String id = v1.get_id() + "_" + v2.get_id();
+				Edge e = new Edge(id, this.relationshipName, v2.get_id(), v2.getVertexType(), v1.get_id(), v1.getVertexType(), source);
+				edges.add(e);
+			}
+			else if (v1.getVertexType().equalsIgnoreCase("file")) {
+				String id = v2.get_id() + "_" + v1.get_id();
+				Edge e = new Edge(id, this.relationshipName, v1.get_id(), v1.getVertexType(), v2.get_id(), v2.getVertexType(), source);
+				edges.add(e);
+			}
+			else if (v1.getVertexType().equalsIgnoreCase("function")) {
+				String id = v2.get_id() + "_" + v1.get_id();
+				Edge e = new Edge(id, this.relationshipName, v1.get_id(), v1.getVertexType(), v2.get_id(), v2.getVertexType(), source);
+				edges.add(e);
+			}
+			else {
+				System.err.println("ERROR: Unhandled case of relationship direction within CyberRelation class.");
 			}
 		
-			for (int i=0; i<vertices.size(); i++) {
-				Vertex vertex1 = vertices.get(i);
-				
-				for (int j=i+1; j<vertices.size(); j++) {
-					Vertex vertex2 = vertices.get(j);
-					//create the edge between them depending on which vertex type is the inV and the outV
-					if ((inVTypes.contains(vertex1.getVertexType())) && (outVTypes.contains(vertex2.getVertexType()))) {
-						String id = vertex2.get_id() + "_" + vertex1.get_id();
-						Edge e = new Edge(id, this.relationshipName, vertex1.get_id(), vertex1.getVertexType(), vertex2.get_id(), vertex2.getVertexType(), source);
-						edges.add(e);
-					}
-					else if ((outVTypes.contains(vertex1.getVertexType())) && (inVTypes.contains(vertex2.getVertexType()))) {
-						String id = vertex1.get_id() + "_" + vertex2.get_id();
-						Edge e = new Edge(id, this.relationshipName, vertex2.get_id(), vertex2.getVertexType(), vertex1.get_id(), vertex1.getVertexType(), source);
-						edges.add(e);
-					}
-				}
-			}
 		}
 		
 		return edges;
@@ -173,12 +133,12 @@ public class CyberRelation {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result
-				+ ((cyberEntities == null) ? 0 : cyberEntities.hashCode());
+		result = prime * result + ((entity1 == null) ? 0 : entity1.hashCode());
+		result = prime * result + ((entity2 == null) ? 0 : entity2.hashCode());
+		result = prime * result + ((entityType1 == null) ? 0 : entityType1.hashCode());
+		result = prime * result + ((entityType2 == null) ? 0 : entityType2.hashCode());
 		result = prime * result + (isEdge ? 1231 : 1237);
-		result = prime
-				* result
-				+ ((relationshipName == null) ? 0 : relationshipName.hashCode());
+		result = prime * result + ((relationshipName == null) ? 0 : relationshipName.hashCode());
 		return result;
 	}
 
@@ -191,10 +151,25 @@ public class CyberRelation {
 		if (getClass() != obj.getClass())
 			return false;
 		CyberRelation other = (CyberRelation) obj;
-		if (cyberEntities == null) {
-			if (other.cyberEntities != null)
+		if (entity1 == null) {
+			if (other.entity1 != null)
 				return false;
-		} else if (!cyberEntities.equals(other.cyberEntities))
+		} else if (!entity1.equals(other.entity1))
+			return false;
+		if (entity2 == null) {
+			if (other.entity2 != null)
+				return false;
+		} else if (!entity2.equals(other.entity2))
+			return false;
+		if (entityType1 == null) {
+			if (other.entityType1 != null)
+				return false;
+		} else if (!entityType1.equals(other.entityType1))
+			return false;
+		if (entityType2 == null) {
+			if (other.entityType2 != null)
+				return false;
+		} else if (!entityType2.equals(other.entityType2))
 			return false;
 		if (isEdge != other.isEdge)
 			return false;
@@ -208,8 +183,7 @@ public class CyberRelation {
 
 	@Override
 	public String toString() {
-		return "CyberRelation [cyberEntities=" + cyberEntities
-				+ ", relationshipName=" + relationshipName + ", isEdge="
+		return "CyberRelation [entityType1=" + entityType1 + ", entity1=" + entity1 + ", entityType2=" + entityType2 + ", entity2=" + entity2 + ", relationshipName=" + relationshipName + ", isEdge="
 				+ isEdge + "]";
 	}
 

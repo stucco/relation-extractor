@@ -31,6 +31,16 @@
   		<version>2.7.0</version>
 	</dependency>
 	<dependency>
+  		<groupId>com.googlecode.json-simple</groupId>
+  		<artifactId>json-simple</artifactId>
+  		<version>1.1.1</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>commons-io</groupId>
+  		<artifactId>commons-io</artifactId>
+  		<version>2.5</version>
+  	</dependency>
+	<dependency>
     	<groupId>junit</groupId>
     	<artifactId>junit</artifactId>
     	<version>4.8.1</version>
@@ -92,7 +102,11 @@
         <resource>
             <directory>src/main/resources</directory>
             <includes>
-                <include>patterns/patterns_relations.json</include>
+                <include>lib/libsvm.jar</include>
+                <include>svmModelFiles/*</include>
+                <include>word2vecModels/*</include>
+                <include>nvdxml/*</include>
+                <!-- <include>dictionaries/relevant_terms.txt</include> -->
             </includes>
         </resource>
     </resources>

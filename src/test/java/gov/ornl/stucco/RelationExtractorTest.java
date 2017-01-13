@@ -106,7 +106,7 @@ public class RelationExtractorTest {
 		String testSentence = "Microsoft Windows XP before 2.8 has cross-site scripting vulnerability in file.php (refer to CVE-2014-1234).";
 		EntityLabeler labeler = new EntityLabeler();
 		Annotation doc = labeler.getAnnotatedDoc("My Doc", testSentence);
-		RelationExtractor rx = new RelationExtractor("src/main/resources/patterns_relations_abbrev.json");
+		RelationExtractor rx = new RelationExtractor();
 		String graph = rx.createSubgraph(doc, "a source");
 		assert(graph.equals(expectedGraph));
 	}
