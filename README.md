@@ -1,5 +1,5 @@
 # Relation Extraction
-Library to create vertices and edges from a document annotated with cyber-entity labels and a list of relationship patterns between these cyber entities.
+Library to create vertices and edges from a document annotated with cyber-entity labels and a set of SVMs and feature models to predict relationships between these cyber entities.
 
 ## Dependency
 The Relation Extraction library shares object models with the Entity Extraction library. To install the dependency locally:
@@ -40,63 +40,57 @@ The Relation Extraction library shares object models with the Entity Extraction 
 		"MS15-035" is extracted as a vulnerability MS property, and "remote code execution" is extracted as a vulnerability description property. This type of relationship indicates that both properties are describing the same vulnerability object.
 
 
-## Relationship Patterns
-These patterns are defined in a JSON-formatted file. There are three types of patterns we will need to find:
-
-* The exact-match pattern consists of at least two cyber-entity labels, and words or part-of-speech (pos) tags.  The annotated document must match the pattern exactly with no extra words. 
-	
-		Example Text: “Tomcat from Apache”
-		Pattern: <SW.PRODUCT>, "from", <SW.VENDOR>
-	
-* The fuzzy-match pattern begins and ends with cyber-entity labels, but it allows for extra words to be present in the document that are not reflected in the pattern. The words, or pos tags, in the pattern must appear in the annotated document, but there can be extra words as well. The only restriction is the two entities are no more than 10 words apart in the document.
-	
-		Example Text: “Apache Tomcat’s latest update 8.0.22”
-		Pattern: <SW.PRODUCT>, “update”, <SW.VERSION>
-	
-* The parse-tree-path pattern defines a path through a sentence’s parse tree, where the first and last elements of the path are labeled cyber entities. 
-	
-		Example Parse Tree: (NP (NP (NNP Apache) (NNP Tomcat) (POS 's)) (JJS latest))
-		Pattern: <SW.VENDOR> -- NNP -- NP -- NNP -- <SW.PRODUCT>
-	
-The majority of the knowledge graph's ontology is defined within this file, so the file can be modified while the extractor's mechanics remain the same. The file format is as follows:
-
-	{"Patterns": [
-	{"edgeType": "ExploitTargetRelatedObservable", "patternType": "ExactPattern", "patternSequence": [{"class": "CyberEntity", "value": "sw.product", "vType": "inV"}, {"class": "Token", "value": "update"}, {"class": "Token", "value": "-LRB-"}, {"class": "CyberEntity", "value": "vuln.name", "vType": "outV"}]},
-	{"vertexType": "software", "patternType": "ExactPattern", "patternSequence": [{"class": "Token", "value": "versions"}, {"class": "Token", "value": "of"}, {"class": "CyberEntity", "value": "sw.product"}, {"class": "Token", "value": "are"}, {"class": "CyberEntity", "value": "sw.version"}, {"class": "POS", "value": "IN"}, {"class": "CyberEntity", "value": "sw.version"}]},
-	{"vertexType": "software", "patternType": "ParseTreePattern", "patternSequence": [{"class": "CyberEntity", "value": "sw.product"}, {"class": "TreeElement", "value": "NNP"}, ...]},
-	...
-	] }
-
-
 ## Input
 * Output from the [Entity-Extractor](https://github.com/stucco/entity-extractor) as an Annotation object, which represents the sentences, list of words from the text, along with each word's part of speech tag and cyber domain label.
 * The String name of the document's source
-* A JSON file containing the set of patterns to find in the annotated document
+* The String name of the document's title
 	
 
 ## Current Process
-* For each pattern:
-	* Search the document for candidate instances and for each instance:
-		* If the pattern type is ExactPattern, then all tokens listed in the pattern sequence must match
-		* If the pattern type is FuzzyPattern, then all the cyber entities must match those in the pattern sequence with no more than 10 words between them, but there can be other tokens in the document that are not represented in the pattern sequence
-		* If the pattern type is ParseTreePattern, then the pattern sequence represents a path, between cyber entities, in the parse tree and all elements must match exactly
+* Pre-trained Word2Vec model
+* Pre-trained SVM models, one for each relationship and entities' order of appearance
+* Pre-generated feature maps, one for each relationship and enities' order of appearance
+* NVD XML files are used to find examples of the relationships
+* For each Annotated document:
+	1. Use NVD files to find known examples of relationships in document
+	2. Use Word2Vec model to encode each token of the document
+	3. Use feature maps to generate feature vectors for each token of the document
+	4. Use pre-trained SVM models with the document's feature vectors to predict relationships between cyber entities
 
+Note: Refer to [relation-bootstrap repo](https://github.com/stucco/relation-bootstrap) for more information on the process.
 	
 ## Output
 * A JSON-formatted subgraph of the vertices and edges is created, which loosely resembles the STIX data model
 	
 	```
-	{ "vertices" : 
-		{
-			id1 : { "vertexType": "software", "vendor": "Apache", "product": "Tomcat"},
-			id2 : { "vertexType": "vulnerability", "description": "buffer overflow"},
+	{
+		"vertices": {
+			"1235": {
+				"name": "1235",
+				"vertexType": "software",
+				"product": "Windows XP",
+				"vendor": "Microsoft",
+				"source": "CNN"
+			},
 			...
+			"1240": {
+				"name": "file.php",
+				"vertexType": "file",
+				"source": "CNN"
+			}
 		},
-	  "edges" : 
-	  	[
-	  		{"id": "vuln_Tomcat_1234", "inV": "id1", "outV": "id2", "label": "ExploitTargetRelatedObservable"},
-			...
-	  	]
+		"edges": [
+			{
+				"inVertID": "1237",
+				"outVertID": "1238",
+				"relation": "ExploitTargetRelatedObservable"
+			},
+			{
+				"inVertID": "1240",
+				"outVertID": "1239",
+				"relation": "Sub-Observable"
+			}
+		]
 	}
 	```
 
@@ -104,14 +98,14 @@ The majority of the knowledge graph's ontology is defined within this file, so t
 	EntityLabeler labeler = new EntityLabeler();
 	Annotation doc = labeler.getAnnotatedDoc("My Doc", exampleText);
 	RelationExtractor rx = new RelationExtractor();
-	String graph = rx.createSubgraph(doc, "My source");
+	String graph = rx.createSubgraph(doc, "My source","My Doc");
 	
 ## Test
 1) Install the dependency as described [above](https://github.com/stucco/relation-extractor#dependency)
 
 2) Run the command:
 
-	mvn test
+	mvn test -Dmaven.test.skip=false
 	
 ## License
 This software is freely distributable under the terms of the MIT License.
