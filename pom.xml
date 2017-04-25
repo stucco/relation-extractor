@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>gov.ornl.stucco</groupId>
   <artifactId>relation-extractor</artifactId>
-  <version>1.0.0</version>
+  <version>1.5.0</version>
   <properties>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
       <maven.test.skip>true</maven.test.skip>
@@ -12,8 +12,13 @@
   	<dependency>
   		<groupId>gov.ornl.stucco</groupId>
   		<artifactId>entity-extractor</artifactId>
-  		<version>1.0.0</version>
+  		<version>1.5.0</version>
   	</dependency>
+	<dependency>
+	    <groupId>org.apache.commons</groupId>
+	    <artifactId>commons-compress</artifactId>
+	    <version>1.13</version>
+	</dependency>
   	<dependency>
 	    <groupId>edu.stanford.nlp</groupId>
 	    <artifactId>stanford-corenlp</artifactId>
@@ -63,8 +68,8 @@
 			<artifactId>maven-compiler-plugin</artifactId>
             <version>3.1</version>
 			<configuration>
-				<source>1.7</source>
-				<target>1.7</target>
+				<source>1.8</source>
+				<target>1.8</target>
 				<showDeprecation>true</showDeprecation>
 				<showWarnings>true</showWarnings>
 				<fork>true</fork>
@@ -106,7 +111,10 @@
                 <include>svmModelFiles/*</include>
                 <include>word2vecModels/*</include>
                 <include>nvdxml/*</include>
-                <!-- <include>dictionaries/relevant_terms.txt</include> -->
+                <include>entityExtractedText/*</include>
+                <include>temp/*</include>
+                <include>featureMapFiles/*</include>
+                <include>instanceFiles/*</include>
             </includes>
         </resource>
     </resources>

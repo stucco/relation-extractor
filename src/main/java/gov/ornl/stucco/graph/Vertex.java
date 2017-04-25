@@ -59,7 +59,12 @@ public class Vertex {
 	}
 
 	public void addProperty(String propertyName, String propertyValue) {
-		properties.put(propertyName, propertyValue);
+		if (propertyName.equalsIgnoreCase("name")) {
+			this.name = propertyValue;
+		}
+		else {
+			properties.put(propertyName, propertyValue);
+		}
 	}
 	
 	public String getProperty(String propertyName) {

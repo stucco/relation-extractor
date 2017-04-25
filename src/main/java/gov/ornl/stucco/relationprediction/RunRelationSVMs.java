@@ -16,9 +16,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.lang.management.ManagementFactory;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 
 
 
@@ -74,7 +71,7 @@ public class RunRelationSVMs
 		File testpredictionsfile2 = ProducedFileGetter.getTemporaryFile("PR2." + pid);
 		
 		
-		File libsvmjar = ProducedFileGetter.getLibSVMJarFile();
+		String libsvmjarPath = ProducedFileGetter.getLibSVMJarPath();
 		
 		
 		//HashMap<Integer, ArrayList<InstanceID>> relationtypeToinstanceidorder = InstanceID.readRelationTypeToInstanceIDOrder(entityextractedfilename, true);
@@ -122,16 +119,16 @@ public class RunRelationSVMs
 							{
 								for(double gamma : gammas)
 								{
-									File modelfile = ProducedFileGetter.getSVMModelFile(kerneltype, entityextractedfilename, featuretypes, relationtype, testfold1, testfold2, c, gamma);
+									String modelfile = ProducedFileGetter.getSVMModelFilePath(kerneltype, entityextractedfilename, featuretypes, relationtype, testfold1, testfold2, c, gamma);
 							
 									String line;
-									if(!modelfile.exists() || alwaysretrain)
+									if(modelfile != null || alwaysretrain)
 									{
 										String[] trainarray = null;
 										if(kerneltype.equals("Linear"))
-											trainarray = new String[]{"java", "-cp", libsvmjar.getAbsolutePath(), "svm_train", "-s", "0", "-t", "0", "-c", "" + c, trainingfile.getAbsolutePath(), modelfile.getAbsolutePath()};
+											trainarray = new String[]{"java", "-cp", libsvmjarPath, "svm_train", "-s", "0", "-t", "0", "-c", "" + c, trainingfile.getAbsolutePath(), modelfile};
 										else if(kerneltype.equals("RBF"))
-											trainarray = new String[]{"java", "-cp", libsvmjar.getAbsolutePath(), "svm_train", "-s", "0", "-t", "2", "-c", "" + c, "-g", "" + gamma, trainingfile.getAbsolutePath(), modelfile.getAbsolutePath()};
+											trainarray = new String[]{"java", "-cp", libsvmjarPath, "svm_train", "-s", "0", "-t", "2", "-c", "" + c, "-g", "" + gamma, trainingfile.getAbsolutePath(), modelfile};
 								
 
 										Process process = (new ProcessBuilder(trainarray)).start();
@@ -143,7 +140,7 @@ public class RunRelationSVMs
 							
 							
 									//Apply the model to test instances
-									String[] t1array = {"java", "-cp",  libsvmjar.getAbsolutePath(), "svm_predict", testfile1.getAbsolutePath(), modelfile.getAbsolutePath(), testpredictionsfile1.getAbsolutePath()};
+									String[] t1array = {"java", "-cp",  libsvmjarPath, "svm_predict", testfile1.getAbsolutePath(), modelfile, testpredictionsfile1.getAbsolutePath()};
 									Process t1process = (new ProcessBuilder(t1array)).start();
 									BufferedReader br = new BufferedReader(new InputStreamReader(t1process.getErrorStream()));
 									while ((line = br.readLine()) != null)
@@ -157,7 +154,7 @@ public class RunRelationSVMs
 									//Recall that we left two folds out of the training set.  If those two folds are not the same, also apply the model to and print the results from the other fold.
 									if(testfold1 != testfold2 && (testfold1 != null & testfold2 != null))
 									{
-										String[] t2array = {"java", "-cp", libsvmjar.getAbsolutePath(), "svm_predict", testfile2.getAbsolutePath(), modelfile.getAbsolutePath(), testpredictionsfile2.getAbsolutePath()};
+										String[] t2array = {"java", "-cp", libsvmjarPath, "svm_predict", testfile2.getAbsolutePath(), modelfile, testpredictionsfile2.getAbsolutePath()};
 										Process t2process = (new ProcessBuilder(t2array)).start();
 										br = new BufferedReader(new InputStreamReader(t2process.getErrorStream()));
 										while ((line = br.readLine()) != null)
@@ -167,9 +164,6 @@ public class RunRelationSVMs
 										printResultsFile(testfold2 + "-" + getFoldSplitString(testfold1, testfold2) + " " + "kerneltype=" + kerneltype + " " + "c=" + c + " " + "gamma=" + gamma + " " + "featuretypes=" + featuretypes, testresultsout, testfile2, testfile2comments, testpredictionsfile2, false);
 									}
 							
-									//We only care about the predictions in most cases.  We need to save the model only when we are training on the entire dataset because that model may be used to make real predictions for stucco.
-									if(!(testfold1 == null && testfold2 == null))
-										modelfile.delete();
 								}
 							}
 						}

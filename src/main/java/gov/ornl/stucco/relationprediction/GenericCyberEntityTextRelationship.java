@@ -17,7 +17,6 @@ package gov.ornl.stucco.relationprediction;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
@@ -250,168 +249,171 @@ public class GenericCyberEntityTextRelationship
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 			DocumentBuilder db = dbf.newDocumentBuilder();
 		
-			for(File file : ProducedFileGetter.getNVDXMLDir().listFiles())
-			{
-				if(!file.getName().endsWith(".zip"))
-					continue;
-				
-				ZipFile zipfile = new ZipFile(file);
-			    Enumeration<? extends ZipEntry> entries = zipfile.entries();
-			    while(entries.hasMoreElements())
-			    {
-			        ZipEntry entry = entries.nextElement();
-			        InputStream stream = zipfile.getInputStream(entry);
-				
-			        org.w3c.dom.Document document = db.parse(stream);
-			        org.w3c.dom.Element root = document.getDocumentElement();
-			        org.w3c.dom.NodeList nodelist = root.getChildNodes();
-			        for(int i = 0; i < nodelist.getLength(); i++)  //Each node should be associated with a vulnerability.
-			        {
-			        	org.w3c.dom.Node node = nodelist.item(i);
+			File nvdDir = ProducedFileGetter.getNVDDir();
+			if (nvdDir != null) {
+				for (File nvdFile : nvdDir.listFiles())
+				{
 					
-			        	//Skip any nodes that are not vulnerability entries, because some nodes are not vulnerability information.
-			        	if(!node.getNodeName().equals("entry"))
-			        		continue;
+					if(!nvdFile.getName().endsWith(".zip")) {
+						continue;
+					}
 					
-					
-			        	//These are holder variables for all the stuff that is going to end up
-			        	//being related to each other.  We set the values of these things as
-			        	//we progress through the subnodes.
-			        	String cveid = null;
-						String msid = null;
-						ArrayList<SoftwareWVersion> vulnerablesoftwares = new ArrayList<SoftwareWVersion>();
-						ArrayList<String> description = null;
-						String name = null;
-						HashSet<String> functionnames = new HashSet<String>();
-						HashSet<String> filenames = new HashSet<String>();
-					
-					
-						org.w3c.dom.NodeList nodelist2 = node.getChildNodes();
-						for(int j = 0; j < nodelist2.getLength(); j++)
-						{
-							org.w3c.dom.Node node2 = nodelist2.item(j);
+					ZipFile zipFile = new ZipFile(nvdFile);
+					Enumeration<ZipEntry> entries = (Enumeration<ZipEntry>) zipFile.entries();
+				    while(entries.hasMoreElements())
+				    {
+				    	
+				        org.w3c.dom.Document document = db.parse(zipFile.getInputStream(entries.nextElement()));
+				        org.w3c.dom.Element root = document.getDocumentElement();
+				        org.w3c.dom.NodeList nodelist = root.getChildNodes();
+				        for(int i = 0; i < nodelist.getLength(); i++)  //Each node should be associated with a vulnerability.
+				        {
+				        	org.w3c.dom.Node node = nodelist.item(i);
 						
-							
-							//Look into each of these if/else if statements to see where we find entities and how we set them from what we find there.
-							if(node2.getNodeName().equals("vuln:cve-id"))
-								cveid = node2.getTextContent();
-							else if(node2.getNodeName().equals("vuln:references"))
+				        	//Skip any nodes that are not vulnerability entries, because some nodes are not vulnerability information.
+				        	if(!node.getNodeName().equals("entry"))
+				        		continue;
+						
+						
+				        	//These are holder variables for all the stuff that is going to end up
+				        	//being related to each other.  We set the values of these things as
+				        	//we progress through the subnodes.
+				        	String cveid = null;
+							String msid = null;
+							ArrayList<SoftwareWVersion> vulnerablesoftwares = new ArrayList<SoftwareWVersion>();
+							ArrayList<String> description = null;
+							String name = null;
+							HashSet<String> functionnames = new HashSet<String>();
+							HashSet<String> filenames = new HashSet<String>();
+						
+						
+							org.w3c.dom.NodeList nodelist2 = node.getChildNodes();
+							for(int j = 0; j < nodelist2.getLength(); j++)
 							{
-								org.w3c.dom.NodeList nodelist3 = node2.getChildNodes();
-								for(int k = 0; k < nodelist3.getLength(); k++)
+								org.w3c.dom.Node node2 = nodelist2.item(j);
+							
+								
+								//Look into each of these if/else if statements to see where we find entities and how we set them from what we find there.
+								if(node2.getNodeName().equals("vuln:cve-id"))
+									cveid = node2.getTextContent();
+								else if(node2.getNodeName().equals("vuln:references"))
 								{
-									org.w3c.dom.Node node3 = nodelist3.item(k);
-									if(node3.getNodeName().equals("vuln:reference"))
+									org.w3c.dom.NodeList nodelist3 = node2.getChildNodes();
+									for(int k = 0; k < nodelist3.getLength(); k++)
 									{
-										String possiblemsid = node3.getTextContent();
-										if(possiblemsid.startsWith("MS") && possiblemsid.length() == 8 && possiblemsid.charAt(4) == '-')
-											msid = possiblemsid;
+										org.w3c.dom.Node node3 = nodelist3.item(k);
+										if(node3.getNodeName().equals("vuln:reference"))
+										{
+											String possiblemsid = node3.getTextContent();
+											if(possiblemsid.startsWith("MS") && possiblemsid.length() == 8 && possiblemsid.charAt(4) == '-')
+												msid = possiblemsid;
+										}
 									}
 								}
-							}
-							else if(node2.getNodeName().equals("vuln:vulnerable-software-list"))
-							{
-								org.w3c.dom.NodeList nodelist3 = node2.getChildNodes();
-								for(int k = 0; k < nodelist3.getLength(); k++)
+								else if(node2.getNodeName().equals("vuln:vulnerable-software-list"))
 								{
-									org.w3c.dom.Node node3 = nodelist3.item(k);
-									if(node3.getNodeName().equals("vuln:product"))
+									org.w3c.dom.NodeList nodelist3 = node2.getChildNodes();
+									for(int k = 0; k < nodelist3.getLength(); k++)
 									{
-										String vulnerablesoftwareid = node3.getTextContent();
-					
-										//All the stuff we want to know about a software is encoded in the software id, so we can build the Software object when we extract the id.
-										SoftwareWVersion vulnerablesoftware = SoftwareWVersion.getSoftwareFromSoftwareID(vulnerablesoftwareid);
-								
-										vulnerablesoftwares.add(vulnerablesoftware);
-									}
-								}
-							}
-							else if(node2.getNodeName().equals("vuln:summary"))
-							{
-								String summary = node2.getTextContent().toLowerCase();
-							
-							
-								//A relevant term counts as a description if it appears in the list of relevant terms at https://github.com/stucco/entity-extractor/blob/master/src/main/resources/dictionaries/relevant_terms.txt
-								description = Vulnerability.getRelevantDescriptionsFromText(summary);
-							
-							
-								//We say the vulnerability's name starts after ", aka " and ends at whichever occurs first: 1) the next period, 2) the next comma, or 3) the end of the summary.
-								int startposition = summary.lastIndexOf(", aka ");
-								if(startposition > -1)
-								{
-									startposition = startposition + 6;
-								
-									int nextperiodposition = summary.indexOf('.', startposition);
-									if(nextperiodposition == -1)
-										nextperiodposition = Integer.MAX_VALUE;
-									int nextcommaposition = summary.indexOf(',', startposition);
-									if(nextcommaposition == -1)
-										nextcommaposition = Integer.MAX_VALUE;
-									int endofstring = summary.length()-1;
-								
-									int endposition = Math.min(nextperiodposition, Math.min(nextcommaposition, endofstring));
-								
-									name = summary.substring(startposition, endposition).replaceAll("\"", "");
-								}
-							
-							
-								//Summaries contain function and file names sometimes
-								String[] splitdescription = summary.split(" ");
-								for(int k = 0; k < splitdescription.length; k++)
-								{
-									if(splitdescription[k].startsWith("function"))
-									{
-										String possiblefunctionthing = splitdescription[k];
-										if(possiblefunctionthing.charAt(possiblefunctionthing.length()-1) == ',' || possiblefunctionthing.charAt(possiblefunctionthing.length()-1) == ';' || possiblefunctionthing.charAt(possiblefunctionthing.length()-1) == ')')
-											possiblefunctionthing = possiblefunctionthing.substring(0, possiblefunctionthing.length()-1);
-										if((possiblefunctionthing.equals("function") || possiblefunctionthing.equals("functions")) && k > 0)
-											functionnames.add(splitdescription[k-1]);
-									}
+										org.w3c.dom.Node node3 = nodelist3.item(k);
+										if(node3.getNodeName().equals("vuln:product"))
+										{
+											String vulnerablesoftwareid = node3.getTextContent();
+						
+											//All the stuff we want to know about a software is encoded in the software id, so we can build the Software object when we extract the id.
+											SoftwareWVersion vulnerablesoftware = SoftwareWVersion.getSoftwareFromSoftwareID(vulnerablesoftwareid);
 									
-									RelevantFile f = RelevantFile.getRelevantFileOfCommonType(splitdescription[k]);
-									if(f != null)
-										filenames.add(f.getFileName());
+											vulnerablesoftwares.add(vulnerablesoftware);
+										}
+									}
 								}
-							}	
-						}
-					
-					
-						//We wait to create the vulnerability object until here because Vulnerability's fields need to be populated from information from different places in the xml entity (so we need to finish the last loop before constructing a vulnerability instance).
-						Vulnerability vulnerability = Vulnerability.getVulnerabilityFromCVEID(cveid, msid, name, description);
-						
-					
-						//We want to associate functions and file names with the vulnerability, software, and 
-						//relationship, but we do not have a really good way for figuring out when they are 
-						//associated with the right software if there are multiple softwares for this vulnerability.
-						//So we associate a file name or vulnerability with these things only if 
-						//all the vulnerable softwares are versions of the same software.  So, for example, we
-						//would not associate any functions or filenames with anything if the vulnerable
-						//softwares included Flash and Firefox, but we would create the association if 
-						//the vulnerability is associated with Firefox version 1.3 and Firefox version 1.4.
-						boolean founddifferentvulnerablesoftwares = false;
-						if(vulnerablesoftwares.size() > 0)
-						{
-							String thesoftwarename = vulnerablesoftwares.get(0).getName();
-							for(int j = 1; j < vulnerablesoftwares.size(); j++)
-								if(!thesoftwarename.equals(vulnerablesoftwares.get(j).getName()))
-									founddifferentvulnerablesoftwares = true;
-						}
-					
-					
-						//Relate all softwares mentioned with the vulnerability.
-						for(SoftwareWVersion software : vulnerablesoftwares)
-						{
-							VulnerabilityToSoftwareWVersionRelationship r = VulnerabilityToSoftwareWVersionRelationship.getRelationship(software, vulnerability);
-						
-							if(!founddifferentvulnerablesoftwares)
-							{
-								r.setFunctionNames(functionnames);
-								r.setFileNames(filenames);
+								else if(node2.getNodeName().equals("vuln:summary"))
+								{
+									String summary = node2.getTextContent().toLowerCase();
+								
+								
+									//A relevant term counts as a description if it appears in the list of relevant terms at https://github.com/stucco/entity-extractor/blob/master/src/main/resources/dictionaries/relevant_terms.txt
+									description = Vulnerability.getRelevantDescriptionsFromText(summary);
+								
+								
+									//We say the vulnerability's name starts after ", aka " and ends at whichever occurs first: 1) the next period, 2) the next comma, or 3) the end of the summary.
+									int startposition = summary.lastIndexOf(", aka ");
+									if(startposition > -1)
+									{
+										startposition = startposition + 6;
+									
+										int nextperiodposition = summary.indexOf('.', startposition);
+										if(nextperiodposition == -1)
+											nextperiodposition = Integer.MAX_VALUE;
+										int nextcommaposition = summary.indexOf(',', startposition);
+										if(nextcommaposition == -1)
+											nextcommaposition = Integer.MAX_VALUE;
+										int endofstring = summary.length()-1;
+									
+										int endposition = Math.min(nextperiodposition, Math.min(nextcommaposition, endofstring));
+									
+										name = summary.substring(startposition, endposition).replaceAll("\"", "");
+									}
+								
+								
+									//Summaries contain function and file names sometimes
+									String[] splitdescription = summary.split(" ");
+									for(int k = 0; k < splitdescription.length; k++)
+									{
+										if(splitdescription[k].startsWith("function"))
+										{
+											String possiblefunctionthing = splitdescription[k];
+											if(possiblefunctionthing.charAt(possiblefunctionthing.length()-1) == ',' || possiblefunctionthing.charAt(possiblefunctionthing.length()-1) == ';' || possiblefunctionthing.charAt(possiblefunctionthing.length()-1) == ')')
+												possiblefunctionthing = possiblefunctionthing.substring(0, possiblefunctionthing.length()-1);
+											if((possiblefunctionthing.equals("function") || possiblefunctionthing.equals("functions")) && k > 0)
+												functionnames.add(splitdescription[k-1]);
+										}
+										
+										RelevantFile f = RelevantFile.getRelevantFileOfCommonType(splitdescription[k]);
+										if(f != null)
+											filenames.add(f.getFileName());
+									}
+								}	
 							}
-						}
-			        }
+						
+						
+							//We wait to create the vulnerability object until here because Vulnerability's fields need to be populated from information from different places in the xml entity (so we need to finish the last loop before constructing a vulnerability instance).
+							Vulnerability vulnerability = Vulnerability.getVulnerabilityFromCVEID(cveid, msid, name, description);
+							
+						
+							//We want to associate functions and file names with the vulnerability, software, and 
+							//relationship, but we do not have a really good way for figuring out when they are 
+							//associated with the right software if there are multiple softwares for this vulnerability.
+							//So we associate a file name or vulnerability with these things only if 
+							//all the vulnerable softwares are versions of the same software.  So, for example, we
+							//would not associate any functions or filenames with anything if the vulnerable
+							//softwares included Flash and Firefox, but we would create the association if 
+							//the vulnerability is associated with Firefox version 1.3 and Firefox version 1.4.
+							boolean founddifferentvulnerablesoftwares = false;
+							if(vulnerablesoftwares.size() > 0)
+							{
+								String thesoftwarename = vulnerablesoftwares.get(0).getName();
+								for(int j = 1; j < vulnerablesoftwares.size(); j++)
+									if(!thesoftwarename.equals(vulnerablesoftwares.get(j).getName()))
+										founddifferentvulnerablesoftwares = true;
+							}
+						
+						
+							//Relate all softwares mentioned with the vulnerability.
+							for(SoftwareWVersion software : vulnerablesoftwares)
+							{
+								VulnerabilityToSoftwareWVersionRelationship r = VulnerabilityToSoftwareWVersionRelationship.getRelationship(software, vulnerability);
+							
+								if(!founddifferentvulnerablesoftwares)
+								{
+									r.setFunctionNames(functionnames);
+									r.setFileNames(filenames);
+								}
+							}
+				        }
+					}
+				    zipFile.close();
 				}
-			    zipfile.close();
 			}
 		}catch(ParserConfigurationException | IOException | SAXException e)
 		{
@@ -1365,14 +1367,6 @@ public class GenericCyberEntityTextRelationship
 	{
 		return allrelationshiptypesset;
 	}
-
-	//A reverse relationship just has entities coming in the opposite order in the text.  We just gave these
-	//reverse relationships IDs that are -1 times the original relationship's id.
-//	public static int getReverseRelationshipType(int relationshiptype)
-//	{
-//		return -relationshiptype;
-//	}
-	
 	
 	
 }

@@ -2,9 +2,10 @@
 //name, its vendor, and its version number.
 package gov.ornl.stucco.relationprediction;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import gov.ornl.stucco.entity.heuristics.CyberHeuristicAnnotator;
@@ -12,9 +13,6 @@ import gov.ornl.stucco.entity.models.CyberEntityType;
 import gov.ornl.stucco.heurstics.utils.FreebaseEntry;
 import gov.ornl.stucco.heurstics.utils.FreebaseList;
 import gov.ornl.stucco.heurstics.utils.ListLoader;
-
-import java.util.ArrayList;
-import java.util.Collection;
 
 
 public class SoftwareWVersion 
@@ -163,6 +161,10 @@ public class SoftwareWVersion
 		if(softwareidTosoftwarewversion == null)
 			GenericCyberEntityTextRelationship.loadAllKnownRelationships();
 		
+		if (softwareidTosoftwarewversion == null) {
+			softwareidTosoftwarewversion = new HashMap<String,SoftwareWVersion>();
+		}
+		
 		return softwareidTosoftwarewversion.values();
 	}
 
@@ -293,6 +295,10 @@ public class SoftwareWVersion
 		if(allknownversions == null)
 			GenericCyberEntityTextRelationship.loadAllKnownRelationships();
 		
+		if (allknownversions == null) {
+			allknownversions = new HashSet<String>();
+		}
+		
 		return allknownversions;
 	}
 	
@@ -302,6 +308,10 @@ public class SoftwareWVersion
 		if(softwareToAliases == null)
 			setAllAliases();
 		
+		if (softwareToAliases == null) {
+			softwareToAliases = new FreebaseList();
+		}
+		
 		return softwareToAliases;
 	}
 	
@@ -309,6 +319,10 @@ public class SoftwareWVersion
 	{
 		if(vendorToAliases == null) {
 			setAllAliases();
+		}
+		
+		if(vendorToAliases == null) {
+			vendorToAliases = new FreebaseList();
 		}
 		
 		return vendorToAliases;

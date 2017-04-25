@@ -48,7 +48,7 @@ public class CyberRelation {
 		this.isEdge = isEdge;
 	}
 	
-	public List<Vertex> getVertexList(String source) {
+	public List<Vertex> getRelationVertices(String source) {
 		List<Vertex> vertices = new ArrayList<Vertex>();
 		if (this.isEdge) {
 			vertices = createVertexList(source);
@@ -99,7 +99,7 @@ public class CyberRelation {
 		return v;
 	}
 	
-	public List<Edge> getEdgeList(Vertex v1, Vertex v2, String source) {
+	public List<Edge> getRelationEdges(Vertex v1, Vertex v2, String source) {
 		List<Edge> edges = new ArrayList<Edge>();
 
 		if (this.isEdge) {
@@ -107,6 +107,11 @@ public class CyberRelation {
 			if (v1.getVertexType().equalsIgnoreCase("vulnerability")) {
 				String id = v1.get_id() + "_" + v2.get_id();
 				Edge e = new Edge(id, this.relationshipName, v2.get_id(), v2.getVertexType(), v1.get_id(), v1.getVertexType(), source);
+				edges.add(e);
+			}
+			else if (v2.getVertexType().equalsIgnoreCase("vulnerability")) {
+				String id = v2.get_id() + "_" + v1.get_id();
+				Edge e = new Edge(id, this.relationshipName, v1.get_id(), v1.getVertexType(), v2.get_id(), v2.getVertexType(), source);
 				edges.add(e);
 			}
 			else if (v1.getVertexType().equalsIgnoreCase("file")) {
@@ -117,6 +122,16 @@ public class CyberRelation {
 			else if (v1.getVertexType().equalsIgnoreCase("function")) {
 				String id = v2.get_id() + "_" + v1.get_id();
 				Edge e = new Edge(id, this.relationshipName, v1.get_id(), v1.getVertexType(), v2.get_id(), v2.getVertexType(), source);
+				edges.add(e);
+			}
+			else if (v2.getVertexType().equalsIgnoreCase("file")) {
+				String id = v1.get_id() + "_" + v2.get_id();
+				Edge e = new Edge(id, this.relationshipName, v2.get_id(), v2.getVertexType(), v1.get_id(), v1.getVertexType(), source);
+				edges.add(e);
+			}
+			else if (v2.getVertexType().equalsIgnoreCase("function")) {
+				String id = v1.get_id() + "_" + v2.get_id();
+				Edge e = new Edge(id, this.relationshipName, v2.get_id(), v2.getVertexType(), v1.get_id(), v1.getVertexType(), source);
 				edges.add(e);
 			}
 			else {

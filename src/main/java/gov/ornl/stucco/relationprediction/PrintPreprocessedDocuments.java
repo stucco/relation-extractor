@@ -16,28 +16,19 @@
 package gov.ornl.stucco.relationprediction;
 
 import java.io.BufferedOutputStream;
-import java.io.File;
 import java.io.FileOutputStream;
-import java.io.PrintStream;
+import java.io.IOException;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-import java.io.PrintWriter;
-import java.io.FileWriter;
-import java.io.IOException;
 
-import edu.stanford.nlp.ling.CoreLabel;
-import edu.stanford.nlp.ling.Sentence;
-import edu.stanford.nlp.ling.CoreAnnotations.CharacterOffsetBeginAnnotation;
-import edu.stanford.nlp.ling.CoreAnnotations.CharacterOffsetEndAnnotation;
-import edu.stanford.nlp.ling.CoreAnnotations.IndexAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.LemmaAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.TextAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.TokensAnnotation;
+import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.util.CoreMap;
-import gov.ornl.stucco.entity.EntityLabeler;
 import gov.ornl.stucco.entity.CyberEntityAnnotator.CyberAnnotation;
 import gov.ornl.stucco.entity.CyberEntityAnnotator.CyberConfidenceAnnotation;
 import gov.ornl.stucco.entity.CyberEntityAnnotator.CyberLabelsAnnotation;
@@ -61,16 +52,16 @@ public class PrintPreprocessedDocuments
 		//files from ProducedFileGetter to help maintain consistency between locations used by different programs.
 
 		//Since there may be issues with sharing files as big as these, we are zipping them instead of just writing them in plain text format.
-		ZipOutputStream aliassubstitutednamesout = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(ProducedFileGetter.getEntityExtractedText("aliasreplaced"))));
+		ZipOutputStream aliassubstitutednamesout = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(ProducedFileGetter.getEETextResources("aliasreplaced"))));
 		aliassubstitutednamesout.putNextEntry(new ZipEntry("data"));
 
-		ZipOutputStream completelyreplacednamesout = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(ProducedFileGetter.getEntityExtractedText("entityreplaced"))));
+		ZipOutputStream completelyreplacednamesout = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(ProducedFileGetter.getEETextResources("entityreplaced"))));
 		completelyreplacednamesout.putNextEntry(new ZipEntry("data"));
 
-		ZipOutputStream originalnamesout = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(ProducedFileGetter.getEntityExtractedText("original"))));
+		ZipOutputStream originalnamesout = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(ProducedFileGetter.getEETextResources("original"))));
 		originalnamesout.putNextEntry(new ZipEntry("data"));
 
-		ZipOutputStream unlemmatizednamesout = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(ProducedFileGetter.getEntityExtractedText("unlemmatized"))));
+		ZipOutputStream unlemmatizednamesout = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(ProducedFileGetter.getEETextResources("unlemmatized"))));
 		unlemmatizednamesout.putNextEntry(new ZipEntry("data"));
 		
 		StringBuilder filenameBuilder = new StringBuilder();

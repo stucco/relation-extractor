@@ -1,12 +1,5 @@
 package gov.ornl.stucco.relationprediction;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-
 /*
  * The purpose of this class is to store information about the entities from which an instance was generated.
  * It includes the name of the file from which it came, the 

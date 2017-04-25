@@ -1,10 +1,6 @@
 package gov.ornl.stucco.relationprediction;
 //This class just parses the lines that get written to the prediction files by RunRelationSVMs.
 
-
-
-import java.util.ArrayList;
-
 public class RelationPrediction 
 {	
 	public static int TPindex = 0;

@@ -41,11 +41,16 @@ public class WriteRelationInstanceFiles
 	
 	private String featuretype;
 	
-	
 	private static DecimalFormat formatter = new DecimalFormat(".0000");
 	private static final String emptystringcode = "ZZZ";	//Used to denote a dependency node path of length 0.
 	
 	public WriteRelationInstanceFiles(String filename, String featureType) {
+		if( !((filename.equals("original") || filename.equals("entityreplaced") || filename.equals("aliasreplaced"))) )
+		{
+			System.err.println("ERROR: WriteRelationInstanceFiles - invalid filename - must be 'original', 'entityreplaced', or 'aliasreplaced'.");
+			System.exit(3);
+		}
+		
 		this.entityextractedfilename = filename;
 		this.featuretype = featureType;
 	}
@@ -90,7 +95,7 @@ public class WriteRelationInstanceFiles
 			for(Integer i : GenericCyberEntityTextRelationship.getAllRelationshipTypesSet())
 			{
 				File f = ProducedFileGetter.getRelationshipSVMInstancesFile(entityextractedfilename, this.featuretype, i);
-				
+								
 				HashMap<String,PrintWriter> contextToprintwriter = relationtypeTocontextToprintwriter.get(i);
 				if(contextToprintwriter == null)
 				{
@@ -113,41 +118,41 @@ public class WriteRelationInstanceFiles
 	//Direct the flow to the method for writing the appropriate feature type.
 	private void buildAndWriteTrainingInstances(Annotation doc, HashMap<Integer,HashMap<String,PrintWriter>> relationtypeTofeaturetypeToprintwriter)
 	{
-		if(featuretype.equals(FeatureMap.WORDEMBEDDINGBEFORECONTEXT))
+		if(featuretype.equalsIgnoreCase(FeatureMap.WORDEMBEDDINGBEFORECONTEXT))
 			writeContextFile(relationtypeTofeaturetypeToprintwriter);
-		if(featuretype.equals(FeatureMap.WORDEMBEDDINGBETWEENCONTEXT))
+		if(featuretype.equalsIgnoreCase(FeatureMap.WORDEMBEDDINGBETWEENCONTEXT))
 			writeContextFile(relationtypeTofeaturetypeToprintwriter);
-		if(featuretype.equals(FeatureMap.WORDEMBEDDINGAFTERCONTEXT))
+		if(featuretype.equalsIgnoreCase(FeatureMap.WORDEMBEDDINGAFTERCONTEXT))
 			writeContextFile(relationtypeTofeaturetypeToprintwriter);
-		if(featuretype.equals(FeatureMap.SYNTACTICPARSETREEPATH))
+		if(featuretype.equalsIgnoreCase(FeatureMap.SYNTACTICPARSETREEPATH))
 			writeParseTreePathFile(doc, relationtypeTofeaturetypeToprintwriter);
-		if(featuretype.equals(FeatureMap.DEPENDENCYPARSETREEEDGEPATH))
+		if(featuretype.equalsIgnoreCase(FeatureMap.DEPENDENCYPARSETREEEDGEPATH))
 			writeParseTreePathFile(doc, relationtypeTofeaturetypeToprintwriter);
-		if(featuretype.equals(FeatureMap.DEPENDENCYPARSETREENODEPATH))
+		if(featuretype.equalsIgnoreCase(FeatureMap.DEPENDENCYPARSETREENODEPATH))
 			writeParseTreePathFile(doc, relationtypeTofeaturetypeToprintwriter);
-		if(featuretype.equals(FeatureMap.DEPENDENCYPARSETREEEDGENODEPATH))
+		if(featuretype.equalsIgnoreCase(FeatureMap.DEPENDENCYPARSETREEEDGENODEPATH))
 			writeParseTreePathFile(doc, relationtypeTofeaturetypeToprintwriter);
-		if(featuretype.equals(FeatureMap.DEPENDENCYPARSETREENODECONTEXTS))
+		if(featuretype.equalsIgnoreCase(FeatureMap.DEPENDENCYPARSETREENODECONTEXTS))
 			writeDependencyContextFile(doc, relationtypeTofeaturetypeToprintwriter);
-		if(featuretype.equals(FeatureMap.SYNTACTICPARSETREESUBPATHS))
+		if(featuretype.equalsIgnoreCase(FeatureMap.SYNTACTICPARSETREESUBPATHS))
 			writeParseTreePathFile(doc, relationtypeTofeaturetypeToprintwriter);
-		if(featuretype.equals(FeatureMap.DEPENDENCYPARSETREEEDGESUBPATHS))
+		if(featuretype.equalsIgnoreCase(FeatureMap.DEPENDENCYPARSETREEEDGESUBPATHS))
 			writeParseTreePathFile(doc, relationtypeTofeaturetypeToprintwriter);
-		if(featuretype.equals(FeatureMap.DEPENDENCYPARSETREENODESUBPATHS))
+		if(featuretype.equalsIgnoreCase(FeatureMap.DEPENDENCYPARSETREENODESUBPATHS))
 			writeParseTreePathFile(doc, relationtypeTofeaturetypeToprintwriter);
-		if(featuretype.equals(FeatureMap.DEPENDENCYPARSETREEEDGENODESUBPATHS))
+		if(featuretype.equalsIgnoreCase(FeatureMap.DEPENDENCYPARSETREEEDGENODESUBPATHS))
 			writeParseTreePathFile(doc, relationtypeTofeaturetypeToprintwriter);
-		if(featuretype.equals(FeatureMap.ENTITYBEFORECOUNTS))
+		if(featuretype.equalsIgnoreCase(FeatureMap.ENTITYBEFORECOUNTS))
 			writeEntityContextFile(relationtypeTofeaturetypeToprintwriter);
-		if(featuretype.equals(FeatureMap.ENTITYBETWEENCOUNTS))
+		if(featuretype.equalsIgnoreCase(FeatureMap.ENTITYBETWEENCOUNTS))
 			writeEntityContextFile(relationtypeTofeaturetypeToprintwriter);
-		if(featuretype.equals(FeatureMap.ENTITYAFTERCOUNTS))
+		if(featuretype.equalsIgnoreCase(FeatureMap.ENTITYAFTERCOUNTS))
 			writeEntityContextFile(relationtypeTofeaturetypeToprintwriter);
-		if(featuretype.equals(FeatureMap.WORDNGRAMSBEFORE))
+		if(featuretype.equalsIgnoreCase(FeatureMap.WORDNGRAMSBEFORE))
 			writeWordNgramFile(relationtypeTofeaturetypeToprintwriter);
-		if(featuretype.equals(FeatureMap.WORDNGRAMSBETWEEN))
+		if(featuretype.equalsIgnoreCase(FeatureMap.WORDNGRAMSBETWEEN))
 			writeWordNgramFile(relationtypeTofeaturetypeToprintwriter);
-		if(featuretype.equals(FeatureMap.WORDNGRAMSAFTER))
+		if(featuretype.equalsIgnoreCase(FeatureMap.WORDNGRAMSAFTER))
 			writeWordNgramFile(relationtypeTofeaturetypeToprintwriter);
 	}
 	
@@ -159,15 +164,16 @@ public class WriteRelationInstanceFiles
 		try
 		{
 			//We are switching to using zip files for these because they could potentially be very big.
-			ZipFile zipfile = new ZipFile(ProducedFileGetter.getEntityExtractedText(entityextractedfilename));
+			ZipFile zipfile = new ZipFile(ProducedFileGetter.getEETextResources(entityextractedfilename));
 			ZipEntry entry = zipfile.entries().nextElement();
 			BufferedReader in = new BufferedReader(new InputStreamReader(zipfile.getInputStream(entry)));
+//			BufferedReader in = new BufferedReader(new InputStreamReader(ProducedFileGetter.getInStreamEEText(entityextractedfilename)));
 
 			//We are switching to using zip files for these because they could potentially be very big.
-			ZipFile zipfile3 = new ZipFile(ProducedFileGetter.getEntityExtractedText("unlemmatized"));
+			ZipFile zipfile3 = new ZipFile(ProducedFileGetter.getEETextResources("unlemmatized"));
 			ZipEntry entry3 = zipfile3.entries().nextElement();
 			BufferedReader unlemmatizedalignedin = new BufferedReader(new InputStreamReader(zipfile3.getInputStream(entry3)));
-			
+//			BufferedReader unlemmatizedalignedin = new BufferedReader(new InputStreamReader(ProducedFileGetter.getInStreamEEText("unlemmatized")));
 
 			InstanceID nextinstanceid;
 			Integer nextheuristiclabel = null;
@@ -218,17 +224,17 @@ public class WriteRelationInstanceFiles
 						String[] secondsentence = filelines.get(secondtokensentencenum);
 					
 						ArrayList<String> context = new ArrayList<String>();
-						if(featuretype.equals(FeatureMap.WORDEMBEDDINGBEFORECONTEXT))
+						if(featuretype.equalsIgnoreCase(FeatureMap.WORDEMBEDDINGBEFORECONTEXT))
 						{
 							for(int i = 0; i < replacedfirsttokenindex; i++)
 								context.add(firstsentence[i]);
 						}
-						if(featuretype.equals(FeatureMap.WORDEMBEDDINGAFTERCONTEXT))
+						if(featuretype.equalsIgnoreCase(FeatureMap.WORDEMBEDDINGAFTERCONTEXT))
 						{
 							for(int i = replacedsecondtokenindex+1; i < secondsentence.length; i++)
 								context.add(secondsentence[i]);
 						}
-						if(featuretype.equals(FeatureMap.WORDEMBEDDINGBETWEENCONTEXT))
+						if(featuretype.equalsIgnoreCase(FeatureMap.WORDEMBEDDINGBETWEENCONTEXT))
 						{
 							if(firsttokensentencenum == secondtokensentencenum)
 							{
@@ -348,7 +354,6 @@ public class WriteRelationInstanceFiles
 					}
 				}
  			}
- 			
  			if(resultlines.size() == 0)
  			{
  				in.close();
@@ -382,13 +387,10 @@ public class WriteRelationInstanceFiles
  	//by the entity extractor in the .ser.gz files.
  	public void writeParseTreePathFile(Annotation doc, HashMap<Integer,HashMap<String,PrintWriter>> relationtypeTocontextToprintwriter)
  	{	 
- 		String currentfilename = null;
  		List<CoreMap> sentences = null;
  		
 		InstanceID nextinstanceid;
 		Integer nextheuristiclabel = null;
-		String desiredfilename;
- 		
 		try
 		{
 			//We're creating these features for each relation type.
@@ -424,21 +426,21 @@ public class WriteRelationInstanceFiles
 					
 					//Get a string representation of the parse tree path between entities represented by nextinstanceid.
 					String parsetreepath = null;
-					if(featuretype.equals(FeatureMap.SYNTACTICPARSETREEPATH))
+					if(featuretype.equalsIgnoreCase(FeatureMap.SYNTACTICPARSETREEPATH))
 						parsetreepath = getSyntacticParseTreePath(nextinstanceid, sentences);
-					else if(featuretype.equals(FeatureMap.DEPENDENCYPARSETREEEDGEPATH))
+					else if(featuretype.equalsIgnoreCase(FeatureMap.DEPENDENCYPARSETREEEDGEPATH))
 						parsetreepath = getDependencyParseTreePath(featuretype, nextinstanceid, sentences);
-					else if(featuretype.equals(FeatureMap.DEPENDENCYPARSETREENODEPATH))
+					else if(featuretype.equalsIgnoreCase(FeatureMap.DEPENDENCYPARSETREENODEPATH))
 						parsetreepath = getDependencyParseTreePath(featuretype, nextinstanceid, sentences);
-					else if(featuretype.equals(FeatureMap.DEPENDENCYPARSETREEEDGENODEPATH))
+					else if(featuretype.equalsIgnoreCase(FeatureMap.DEPENDENCYPARSETREEEDGENODEPATH))
 						parsetreepath = getDependencyParseTreePath(featuretype, nextinstanceid, sentences);
-					else if(featuretype.equals(FeatureMap.SYNTACTICPARSETREESUBPATHS))
+					else if(featuretype.equalsIgnoreCase(FeatureMap.SYNTACTICPARSETREESUBPATHS))
 						parsetreepath = getSyntacticParseTreePath(nextinstanceid, sentences);
-					else if(featuretype.equals(FeatureMap.DEPENDENCYPARSETREEEDGESUBPATHS))
+					else if(featuretype.equalsIgnoreCase(FeatureMap.DEPENDENCYPARSETREEEDGESUBPATHS))
 						parsetreepath = getDependencyParseTreePath(FeatureMap.DEPENDENCYPARSETREEEDGEPATH, nextinstanceid, sentences);
-					else if(featuretype.equals(FeatureMap.DEPENDENCYPARSETREENODESUBPATHS))
+					else if(featuretype.equalsIgnoreCase(FeatureMap.DEPENDENCYPARSETREENODESUBPATHS))
 						parsetreepath = getDependencyParseTreePath(FeatureMap.DEPENDENCYPARSETREENODEPATH, nextinstanceid, sentences);
-					else if(featuretype.equals(FeatureMap.DEPENDENCYPARSETREEEDGENODESUBPATHS))
+					else if(featuretype.equalsIgnoreCase(FeatureMap.DEPENDENCYPARSETREEEDGENODESUBPATHS))
 						parsetreepath = getDependencyParseTreePath(FeatureMap.DEPENDENCYPARSETREEEDGENODEPATH, nextinstanceid, sentences);
 					
 				
@@ -446,15 +448,15 @@ public class WriteRelationInstanceFiles
 					//including the heuristic label and comment extracted from the file written by FindAndOrderAllInstances.
 					//String comment = nextorderedinstanceline.substring(nextorderedinstanceline.indexOf('#'));
 					String comment = FindAndOrderAllInstances.getCommentFromLine(nextorderedinstanceline);
-					if(featuretype.equals(FeatureMap.SYNTACTICPARSETREEPATH) || 
-							featuretype.equals(FeatureMap.DEPENDENCYPARSETREEEDGEPATH) || 
-							featuretype.equals(FeatureMap.DEPENDENCYPARSETREENODEPATH) || 
-							featuretype.equals(FeatureMap.DEPENDENCYPARSETREEEDGENODEPATH))
+					if(featuretype.equalsIgnoreCase(FeatureMap.SYNTACTICPARSETREEPATH) || 
+							featuretype.equalsIgnoreCase(FeatureMap.DEPENDENCYPARSETREEEDGEPATH) || 
+							featuretype.equalsIgnoreCase(FeatureMap.DEPENDENCYPARSETREENODEPATH) || 
+							featuretype.equalsIgnoreCase(FeatureMap.DEPENDENCYPARSETREEEDGENODEPATH))
 						out.println(nextheuristiclabel + " " + parsetreepath + ":1" + " # " + comment);
-					else if(featuretype.equals(FeatureMap.SYNTACTICPARSETREESUBPATHS) || 
-							featuretype.equals(FeatureMap.DEPENDENCYPARSETREEEDGESUBPATHS) || 
-							featuretype.equals(FeatureMap.DEPENDENCYPARSETREENODESUBPATHS) || 
-							featuretype.equals(FeatureMap.DEPENDENCYPARSETREEEDGENODESUBPATHS))
+					else if(featuretype.equalsIgnoreCase(FeatureMap.SYNTACTICPARSETREESUBPATHS) || 
+							featuretype.equalsIgnoreCase(FeatureMap.DEPENDENCYPARSETREEEDGESUBPATHS) || 
+							featuretype.equalsIgnoreCase(FeatureMap.DEPENDENCYPARSETREENODESUBPATHS) || 
+							featuretype.equalsIgnoreCase(FeatureMap.DEPENDENCYPARSETREEEDGENODESUBPATHS))
 						out.println(nextheuristiclabel + " " + getSubPathFeaturesLine(parsetreepath) + " # " + comment);
 				
 				
@@ -605,17 +607,17 @@ public class WriteRelationInstanceFiles
 				if(sge == null)
 				{
 					sge = dependencies1.getEdge(pathwords1.get(i), pathwords1.get(i-1));
-					if(featuretype.equals(FeatureMap.DEPENDENCYPARSETREEEDGEPATH) || featuretype.equals(FeatureMap.DEPENDENCYPARSETREEEDGENODEPATH))
+					if(featuretype.equalsIgnoreCase(FeatureMap.DEPENDENCYPARSETREEEDGEPATH) || featuretype.equalsIgnoreCase(FeatureMap.DEPENDENCYPARSETREEEDGENODEPATH))
 						result += " E" + sge.getRelation().getShortName() + "<";	//E is for Edge.
 				}
 				else
 				{
-					if(featuretype.equals(FeatureMap.DEPENDENCYPARSETREEEDGEPATH) || featuretype.equals(FeatureMap.DEPENDENCYPARSETREEEDGENODEPATH))
+					if(featuretype.equalsIgnoreCase(FeatureMap.DEPENDENCYPARSETREEEDGEPATH) || featuretype.equalsIgnoreCase(FeatureMap.DEPENDENCYPARSETREEEDGENODEPATH))
 						result += " E" + sge.getRelation().getShortName() + ">";
 				}
 				
 				if(i != pathwords1.size()-1)
-					if(featuretype.equals(FeatureMap.DEPENDENCYPARSETREENODEPATH) || featuretype.equals(FeatureMap.DEPENDENCYPARSETREEEDGENODEPATH))
+					if(featuretype.equalsIgnoreCase(FeatureMap.DEPENDENCYPARSETREENODEPATH) || featuretype.equalsIgnoreCase(FeatureMap.DEPENDENCYPARSETREEEDGENODEPATH))
 						result += " N" + pathwords1.get(i).lemma().toLowerCase();	//N is for Node.
 			}
 		}
@@ -631,16 +633,16 @@ public class WriteRelationInstanceFiles
 				if(sge == null)
 				{
 					sge = dependencies1.getEdge(pathwords1.get(i), pathwords1.get(i-1));
-					if(featuretype.equals(FeatureMap.DEPENDENCYPARSETREEEDGEPATH) || featuretype.equals(FeatureMap.DEPENDENCYPARSETREEEDGENODEPATH))
+					if(featuretype.equalsIgnoreCase(FeatureMap.DEPENDENCYPARSETREEEDGEPATH) || featuretype.equalsIgnoreCase(FeatureMap.DEPENDENCYPARSETREEEDGENODEPATH))
 						result += " E" + sge.getRelation().getShortName() + "<";
 				}
 				else
 				{
-					if(featuretype.equals(FeatureMap.DEPENDENCYPARSETREEEDGEPATH) || featuretype.equals(FeatureMap.DEPENDENCYPARSETREEEDGENODEPATH))
+					if(featuretype.equalsIgnoreCase(FeatureMap.DEPENDENCYPARSETREEEDGEPATH) || featuretype.equalsIgnoreCase(FeatureMap.DEPENDENCYPARSETREEEDGENODEPATH))
 						result += " E" + sge.getRelation().getShortName() + ">";
 				}
 				
-				if(featuretype.equals(FeatureMap.DEPENDENCYPARSETREENODEPATH) || featuretype.equals(FeatureMap.DEPENDENCYPARSETREEEDGENODEPATH))
+				if(featuretype.equalsIgnoreCase(FeatureMap.DEPENDENCYPARSETREENODEPATH) || featuretype.equalsIgnoreCase(FeatureMap.DEPENDENCYPARSETREEEDGENODEPATH))
 					result += " N" + pathwords1.get(i).lemma().toLowerCase();
 			}
 			
@@ -660,16 +662,16 @@ public class WriteRelationInstanceFiles
 				if(sge == null)
 				{
 					sge = dependencies2.getEdge(pathwords2.get(i), pathwords2.get(i-1));
-					if(featuretype.equals(FeatureMap.DEPENDENCYPARSETREEEDGEPATH) || featuretype.equals(FeatureMap.DEPENDENCYPARSETREEEDGENODEPATH))
+					if(featuretype.equalsIgnoreCase(FeatureMap.DEPENDENCYPARSETREEEDGEPATH) || featuretype.equalsIgnoreCase(FeatureMap.DEPENDENCYPARSETREEEDGENODEPATH))
 						result += " E" + sge.getRelation().getShortName() + "<";
 				}
 				else
 				{
-					if(featuretype.equals(FeatureMap.DEPENDENCYPARSETREEEDGEPATH) || featuretype.equals(FeatureMap.DEPENDENCYPARSETREEEDGENODEPATH))
+					if(featuretype.equalsIgnoreCase(FeatureMap.DEPENDENCYPARSETREEEDGEPATH) || featuretype.equalsIgnoreCase(FeatureMap.DEPENDENCYPARSETREEEDGENODEPATH))
 						result += " E" + sge.getRelation().getShortName() + ">";
 				}
 				
-				if(featuretype.equals(FeatureMap.DEPENDENCYPARSETREENODEPATH) || featuretype.equals(FeatureMap.DEPENDENCYPARSETREEEDGENODEPATH))
+				if(featuretype.equalsIgnoreCase(FeatureMap.DEPENDENCYPARSETREENODEPATH) || featuretype.equalsIgnoreCase(FeatureMap.DEPENDENCYPARSETREEEDGENODEPATH))
 					result += " N" + pathwords2.get(i-1).lemma().toLowerCase();
 			}
 		}
@@ -689,13 +691,10 @@ public class WriteRelationInstanceFiles
 		WordToVectorMap wvm = WordToVectorMap.getWordToVectorMap(entityextractedfilename);
 		
 		
- 		String currentfilename = null;
  		List<CoreMap> sentences = null;
  		
 		InstanceID nextinstanceid;
 		Integer nextheuristiclabel = null;
-		String desiredfilename;
- 		
 		try
 		{
 			//We're creating these features for each relation type.
@@ -808,12 +807,12 @@ public class WriteRelationInstanceFiles
 		try
 		{
 			//We are switching to using zip files for these because they could potentially be very big.
-			ZipFile zipfile = new ZipFile(ProducedFileGetter.getEntityExtractedText(entityextractedfilename));
+			ZipFile zipfile = new ZipFile(ProducedFileGetter.getEETextResources(entityextractedfilename));
 			ZipEntry entry = zipfile.entries().nextElement();
 			BufferedReader in = new BufferedReader(new InputStreamReader(zipfile.getInputStream(entry)));
 
 			//We are switching to using zip files for these because they could potentially be very big.
-			ZipFile zipfile3 = new ZipFile(ProducedFileGetter.getEntityExtractedText("unlemmatized"));
+			ZipFile zipfile3 = new ZipFile(ProducedFileGetter.getEETextResources("unlemmatized"));
 			ZipEntry entry3 = zipfile3.entries().nextElement();
 			BufferedReader unlemmatizedalignedin = new BufferedReader(new InputStreamReader(zipfile3.getInputStream(entry3)));
 			
@@ -869,17 +868,17 @@ public class WriteRelationInstanceFiles
 					
 						//Figure out which words appear in the context we are interested in.
 						ArrayList<String> context = new ArrayList<String>();
-						if(featuretype.equals(FeatureMap.ENTITYBEFORECOUNTS))
+						if(featuretype.equalsIgnoreCase(FeatureMap.ENTITYBEFORECOUNTS))
 						{
 							for(int i = 0; i < replacedfirsttokenindex; i++)
 								context.add(firstsentence[i]);
 						}
-						if(featuretype.equals(FeatureMap.ENTITYAFTERCOUNTS))
+						if(featuretype.equalsIgnoreCase(FeatureMap.ENTITYAFTERCOUNTS))
 						{
 							for(int i = replacedsecondtokenindex+1; i < secondsentence.length; i++)
 								context.add(secondsentence[i]);
 						}
-						if(featuretype.equals(FeatureMap.ENTITYBETWEENCOUNTS))
+						if(featuretype.equalsIgnoreCase(FeatureMap.ENTITYBETWEENCOUNTS))
 						{
 							if(firsttokensentencenum == secondtokensentencenum)
 							{
@@ -965,12 +964,12 @@ public class WriteRelationInstanceFiles
 		try
 		{
 			//We are switching to using zip files for these because they could potentially be very big.
-			ZipFile zipfile = new ZipFile(ProducedFileGetter.getEntityExtractedText(entityextractedfilename));
+			ZipFile zipfile = new ZipFile(ProducedFileGetter.getEETextResources(entityextractedfilename));
 			ZipEntry entry = zipfile.entries().nextElement();
 			BufferedReader in = new BufferedReader(new InputStreamReader(zipfile.getInputStream(entry)));
 
 			//We are switching to using zip files for these because they could potentially be very big.
-			ZipFile zipfile3 = new ZipFile(ProducedFileGetter.getEntityExtractedText("unlemmatized"));
+			ZipFile zipfile3 = new ZipFile(ProducedFileGetter.getEETextResources("unlemmatized"));
 			ZipEntry entry3 = zipfile3.entries().nextElement();
 			BufferedReader unlemmatizedalignedin = new BufferedReader(new InputStreamReader(zipfile3.getInputStream(entry3)));
 			
@@ -1026,17 +1025,17 @@ public class WriteRelationInstanceFiles
 					
 						//Figure out which words appear in the context we are interested in.
 						ArrayList<String> context = new ArrayList<String>();
-						if(featuretype.equals(FeatureMap.WORDNGRAMSBEFORE))
+						if(featuretype.equalsIgnoreCase(FeatureMap.WORDNGRAMSBEFORE))
 						{
 							for(int i = 0; i < replacedfirsttokenindex; i++)
 								context.add(firstsentence[i]);
 						}
-						if(featuretype.equals(FeatureMap.WORDNGRAMSAFTER))
+						if(featuretype.equalsIgnoreCase(FeatureMap.WORDNGRAMSAFTER))
 						{
 							for(int i = replacedsecondtokenindex+1; i < secondsentence.length; i++)
 								context.add(secondsentence[i]);
 						}
-						if(featuretype.equals(FeatureMap.WORDNGRAMSBETWEEN))
+						if(featuretype.equalsIgnoreCase(FeatureMap.WORDNGRAMSBETWEEN))
 						{
 							if(firsttokensentencenum == secondtokensentencenum)
 							{

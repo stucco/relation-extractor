@@ -4,9 +4,9 @@ package gov.ornl.stucco.relationprediction;
 
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -19,16 +19,16 @@ public class WordToVectorMap extends HashMap<String,double[]>
 	private int vectorlength;
 	
 	
-	WordToVectorMap(File wvf)
+	WordToVectorMap(InputStream wvf)
 	{
 		readWordToVectorsFile(wvf);
 	}
 	
-	private void readWordToVectorsFile(File wvf)
+	private void readWordToVectorsFile(InputStream wvf)
 	{
 		try
 		{
-			BufferedReader in = new BufferedReader(new FileReader(wvf));
+			BufferedReader in = new BufferedReader(new InputStreamReader(wvf));
 			String line;
 			while((line = in.readLine()) != null)
 			{
@@ -57,7 +57,7 @@ public class WordToVectorMap extends HashMap<String,double[]>
 		WordToVectorMap wvm = typeTomap.get(trainingtype);
 		if(wvm == null)
 		{
-			File f = ProducedFileGetter.getWordVectorsFile(trainingtype);
+			InputStream f = ProducedFileGetter.getWordVectorsStream(trainingtype);
 			wvm = new WordToVectorMap(f);
 			typeTomap.put(trainingtype, wvm);
 		}

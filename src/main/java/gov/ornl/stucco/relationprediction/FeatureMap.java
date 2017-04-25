@@ -16,11 +16,16 @@ package gov.ornl.stucco.relationprediction;
 
 
 
-import java.util.*;
-
-import edu.stanford.nlp.io.EncodingPrintWriter.out;
-
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 
 public class FeatureMap extends HashMap<String,Integer>
 {

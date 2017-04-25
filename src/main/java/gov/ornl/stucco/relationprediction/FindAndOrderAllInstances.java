@@ -27,22 +27,28 @@ public class FindAndOrderAllInstances
 	
 	public static void orderAllInstances(String preprocessType) 
 	{
+		if( !((preprocessType.equals("original") || preprocessType.equals("entityreplaced") || preprocessType.equals("aliasreplaced"))) )
+		{
+			System.err.println("ERROR: FindAndOrderAllInstances - invalid preprocessType - must be 'original', 'entityreplaced', or 'aliasreplaced'.");
+			System.exit(3);
+		}
+		
 		HashMap<Integer,PrintWriter> relationToprintwriter = initializePrintWriters(preprocessType);
 		
 		try
 		{
 			//We are switching to using zip files for these because they could potentially be very big.
-			ZipFile zipfile = new ZipFile(ProducedFileGetter.getEntityExtractedText(preprocessType));
+			ZipFile zipfile = new ZipFile(ProducedFileGetter.getEETextResources(preprocessType));
 			ZipEntry entry = zipfile.entries().nextElement();
 		    BufferedReader in = new BufferedReader(new InputStreamReader(zipfile.getInputStream(entry)));
-	
+
 		    //We are switching to using zip files for these because they could potentially be very big.
-			ZipFile zipfile2 = new ZipFile(ProducedFileGetter.getEntityExtractedText("aliasreplaced"));
+			ZipFile zipfile2 = new ZipFile(ProducedFileGetter.getEETextResources("aliasreplaced"));
 			ZipEntry entry2 = zipfile2.entries().nextElement();
 		    BufferedReader aliasreplacedalignedin = new BufferedReader(new InputStreamReader(zipfile2.getInputStream(entry2)));
 			
 		    //We are switching to using zip files for these because they could potentially be very big.
-			ZipFile zipfile3 = new ZipFile(ProducedFileGetter.getEntityExtractedText("unlemmatized"));
+			ZipFile zipfile3 = new ZipFile(ProducedFileGetter.getEETextResources("unlemmatized"));
 			ZipEntry entry3 = zipfile3.entries().nextElement();
 			BufferedReader unlemmatizedalignedin = new BufferedReader(new InputStreamReader(zipfile3.getInputStream(entry3)));
 			
@@ -56,12 +62,12 @@ public class FindAndOrderAllInstances
 			//participating entities appear in the same sentence.  We do not do coreference resolution,
 			//so each entity must be mentioned by name (it cannot be replaced with a pronoun).
 			String line;
+
 			while((line = in.readLine()) != null)
 			{
 				//Read the corresponding line from the alias replaced text file.
 				String aliasedline = aliasreplacedalignedin.readLine();
 				String unlemmatizedline = unlemmatizedalignedin.readLine();
-				
 				
 				//linecounter++;
 				
@@ -142,6 +148,7 @@ public class FindAndOrderAllInstances
 									//Use the aliased version of the relationship to check for this because
 									//its contents are easiest to align with known entities.
 									//Boolean isknownrelationship = relationship.isKnownRelationship();
+									
 									Boolean isknownrelationship = aliasedrelationship.isKnownRelationship();
 									if(isknownrelationship != null)	//Do not bother to write instances with 0 labels.  isknownrelationship == null if the label would be 0 (we don't know the label).
 									{
@@ -213,12 +220,11 @@ public class FindAndOrderAllInstances
 			for(Integer i : GenericCyberEntityTextRelationship.getAllRelationshipTypesSet())
 			{
 				File f = ProducedFileGetter.getRelationshipSVMInstancesOrderFile(preprocessType, i);
-				
 				relationtypeToprintwriter.put(i, new PrintWriter(new FileWriter(f)));
 			}
 		}catch(IOException e)
 		{
-			System.out.println(e);
+			System.err.println(e);
 			e.printStackTrace();
 			System.exit(3);
 		}
