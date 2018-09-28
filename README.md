@@ -109,9 +109,10 @@ The majority of the knowledge graph's ontology is defined within this file, so t
 ## Test
 1) Install the dependency as described [above](https://github.com/stucco/relation-extractor#dependency)
 
-2) Run the command:
+2) Run the commands:
 
-	mvn test
+		mvn clean package
+		mvn test
 	
 ## License
 This software is freely distributable under the terms of the MIT License.
